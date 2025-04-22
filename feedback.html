@@ -3,24 +3,51 @@
 <head><meta charset="UTF-8"><title>Feedback</title>
 <style>
   body { text-align: center; font-family: Arial; margin-top: 40px; }
-  input, textarea { margin: 10px; padding: 10px; width: 300px; }
-  button { padding: 10px 20px; background-color: #2a9d8f; color: white; border: none; border-radius: 5px; cursor: pointer; }
-  button:hover { background-color: #21867a; }
+  .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
+  .nav-buttons button {
+    padding: 8px 14px;
+    background-color: #2a9d8f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .nav-buttons button:hover { background-color: #21867a; }
+  input, textarea {
+    margin: 10px;
+    padding: 10px;
+    width: 300px;
+  }
+  button.submit {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #2a9d8f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  button.submit:hover { background-color: #21867a; }
 </style>
 </head>
 <body>
+  <div class="nav-buttons">
+    <button onclick="window.location.href='dashboard.html'">← Back</button>
+    <button onclick="logout()">Logout</button>
+  </div>
+
   <h2>Workshop Feedback</h2>
   <div id="form"></div>
-  <button onclick="logout()">Logout</button>
+
   <script>
     const user = JSON.parse(localStorage.getItem('user'));
     if (!user.registeredWorkshops.includes('w1')) {
       document.getElementById('form').innerHTML = '<p>You must attend before submitting feedback.</p>';
     } else {
       document.getElementById('form').innerHTML = `
-        <input id='rating' type='number' min='1' max='5' placeholder='Rating'><br>
+        <input id='rating' type='number' min='1' max='5' placeholder='Rating (1-5)'><br>
         <textarea id='comment' placeholder='Your experience...'></textarea><br>
-        <button onclick='submit()'>Submit</button>
+        <button class="submit" onclick='submit()'>Submit</button>
       `;
     }
 
