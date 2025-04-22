@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Trainer Feedback</title>
+<style>body{text-align:center;font-family:Arial;margin:40px;}</style>
+</head>
+<body>
+  <h2>Workshop Feedback</h2>
+  <div id="comments"></div>
+  <button onclick="logout()">Logout</button>
+  <script>
+    const data = JSON.parse(localStorage.getItem('feedback_w1'));
+    const div = document.getElementById('comments');
+    if (!data || !data.comment) {
+      div.innerHTML = "<p>No feedback submitted yet.</p>";
+    } else {
+      div.innerHTML = `
+        <p><strong>Rating:</strong> ${data.rating}/5</p>
+        <p><strong>Comment:</strong> "${data.comment}"</p>
+      `;
+    }
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+</html>

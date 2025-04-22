@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Feedback</title>
+<style>body{text-align:center;font-family:Arial;margin-top:40px;}input,textarea{margin:10px;padding:10px;width:300px;}</style>
+</head>
+<body>
+  <h2>Workshop Feedback</h2>
+  <div id="form"></div>
+  <button onclick="logout()">Logout</button>
+  <script>
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user.registeredWorkshops.includes('w1')) {
+      document.getElementById('form').innerHTML = '<p>You must attend before submitting feedback.</p>';
+    } else {
+      document.getElementById('form').innerHTML = `
+        <input id='rating' type='number' min='1' max='5' placeholder='Rating'><br>
+        <textarea id='comment' placeholder='Your experience...'></textarea><br>
+        <button onclick='submit()'>Submit</button>
+      `;
+    }
+    function submit() {
+      const feedback = {
+        rating: document.getElementById('rating').value,
+        comment: document.getElementById('comment').value
+      };
+      localStorage.setItem('feedback_w1', JSON.stringify(feedback));
+      alert('Feedback submitted!');
+    }
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+</html>

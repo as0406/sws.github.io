@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Confirmation</title>
+<style>body{text-align:center;font-family:Arial;margin-top:50px;}button{padding:10px;}</style>
+</head>
+<body>
+  <h2>Registration Successful</h2>
+  <p>You're registered for Yoga Basics!</p>
+  <button onclick="window.location.href='dashboard.html'">Go to Dashboard</button>
+  <br><br>
+  <button onclick="logout()">Logout</button>
+  <script>
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+</html>

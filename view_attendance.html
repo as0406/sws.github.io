@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>View Attendance</title>
+<style>body{text-align:center;font-family:Arial;margin-top:50px;}label{display:block;margin:10px;}</style>
+</head>
+<body>
+  <h2>Attendance for Yoga Basics</h2>
+  <div id="attendanceList"></div>
+  <button onclick="logout()">Logout</button>
+  <script>
+    const att = JSON.parse(localStorage.getItem('attendance_w1')) || {};
+    const list = document.getElementById('attendanceList');
+    list.innerHTML = `
+      <p>John Smith: ${att.john ? '✔ Attended' : '✖ Absent'}</p>
+    `;
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+</html>

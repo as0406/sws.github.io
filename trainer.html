@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Trainer Dashboard</title>
+<style>body{text-align:center;font-family:Arial;margin-top:50px;}button{margin:10px;padding:10px;}</style>
+</head>
+<body>
+  <h2>Trainer Dashboard</h2>
+  <p>Workshop: Yoga Basics</p>
+  <button onclick="window.location.href='view_attendance.html'">View Attendance</button>
+  <button onclick="window.location.href='trainer_feedback.html'">View Feedback</button>
+  <br><br>
+  <button onclick="logout()">Logout</button>
+  <script>
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+</html>

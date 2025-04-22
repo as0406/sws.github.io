@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Workshops</title>
+<style>body{text-align:center;font-family:Arial;margin-top:50px;}button{margin:10px;padding:10px;}</style>
+</head>
+<body>
+  <h2>Available Workshops</h2>
+  <p>Yoga Basics</p>
+  <button onclick="register()">Register</button>
+  <button onclick="logout()">Logout</button>
+  <script>
+    function register() {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user.registeredWorkshops.includes('w1')) {
+        user.registeredWorkshops.push('w1');
+        localStorage.setItem('user', JSON.stringify(user));
+      }
+      window.location.href = 'confirmation.html';
+    }
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+</html>
