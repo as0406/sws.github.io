@@ -4,14 +4,30 @@
 <style>
   body { font-family: Arial; padding: 30px; }
   .workshop { border: 1px solid #ccc; padding: 15px; margin: 20px auto; max-width: 450px; border-radius: 8px; background: #f9f9f9; }
-  h2 { text-align: center; }
-  button { padding: 8px 14px; margin: 5px; background-color: #2a9d8f; color: white; border: none; border-radius: 5px; cursor: pointer; }
-  button:hover { background-color: #21867a; }
+  h2, h3 { text-align: center; }
+  button {
+    padding: 8px 14px;
+    margin: 10px 5px;
+    background-color: #2a9d8f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #21867a;
+  }
 </style>
 </head>
 <body>
   <h2>Your Registered Workshops</h2>
   <div id="list"></div>
+
+  <hr>
+  <h3>Looking for more?</h3>
+  <button onclick="window.location.href='workshops.html'">Browse Available Workshops</button>
+
+  <br><br>
   <button onclick="logout()">Logout</button>
 
   <script>
@@ -26,7 +42,7 @@
     const container = document.getElementById('list');
 
     if (user.registeredWorkshops.length === 0) {
-      container.innerHTML = "<p style='text-align:center;'>No registered workshops.</p>";
+      container.innerHTML = "<p style='text-align:center;'>No registered workshops yet.</p>";
     } else {
       user.registeredWorkshops.forEach(id => {
         const w = allWorkshops[id];
