@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><title>Feedback</title>
-<style>body{text-align:center;font-family:Arial;margin-top:40px;}input,textarea{margin:10px;padding:10px;width:300px;}</style>
+<style>
+  body { text-align: center; font-family: Arial; margin-top: 40px; }
+  input, textarea { margin: 10px; padding: 10px; width: 300px; }
+  button { padding: 10px 20px; background-color: #2a9d8f; color: white; border: none; border-radius: 5px; cursor: pointer; }
+  button:hover { background-color: #21867a; }
+</style>
 </head>
 <body>
   <h2>Workshop Feedback</h2>
@@ -18,14 +23,19 @@
         <button onclick='submit()'>Submit</button>
       `;
     }
+
     function submit() {
-      const feedback = {
-        rating: document.getElementById('rating').value,
-        comment: document.getElementById('comment').value
-      };
-      localStorage.setItem('feedback_w1', JSON.stringify(feedback));
-      alert('Feedback submitted!');
+      const rating = document.getElementById('rating').value;
+      const comment = document.getElementById('comment').value;
+      if (!rating || rating < 1 || rating > 5 || !comment) {
+        alert("Please provide a valid rating and comment.");
+        return;
+      }
+      localStorage.setItem('feedback_w1', JSON.stringify({ rating, comment }));
+      alert('Feedback submitted successfully!');
+      window.location.href = 'dashboard.html';
     }
+
     function logout() {
       localStorage.clear();
       window.location.href = 'login.html';
