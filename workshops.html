@@ -3,18 +3,27 @@
 <head><meta charset="UTF-8"><title>Workshops</title>
 <style>
   body { font-family: Arial; padding: 30px; text-align: center; }
+  .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
+  .nav-buttons button {
+    padding: 8px 14px;
+    background-color: #2a9d8f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .nav-buttons button:hover { background-color: #21867a; }
   .workshop { border: 1px solid #ccc; padding: 15px; margin: 20px auto; max-width: 450px; border-radius: 8px; background: #f9f9f9; text-align: left; }
-  h2 { margin-bottom: 20px; }
-  button { margin-top: 20px; padding: 10px 20px; font-size: 16px; background-color: #2a9d8f; color: white; border: none; border-radius: 5px; cursor: pointer; }
-  button:hover { background-color: #21867a; }
 </style>
 </head>
 <body>
+  <div class="nav-buttons">
+    <button onclick="window.location.href='dashboard.html'">← Back</button>
+    <button onclick="logout()">Logout</button>
+  </div>
   <h2>Select a Workshop to Register</h2>
   <form id="workshopForm"></form>
   <button onclick="submitSelection()">Register</button>
-  <br><br>
-  <button onclick="logout()">Logout</button>
 
   <script>
     const workshops = [
