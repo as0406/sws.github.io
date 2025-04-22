@@ -3,22 +3,58 @@
 <head><meta charset="UTF-8"><title>Attendance</title>
 <style>
   body { text-align: center; font-family: Arial; margin-top: 40px; }
-  label { display: block; margin: 10px; }
-  button { padding: 10px 20px; background-color: #2a9d8f; color: white; border: none; border-radius: 5px; cursor: pointer; }
-  button:hover { background-color: #21867a; }
+  .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
+  .nav-buttons button {
+    padding: 8px 14px;
+    background-color: #2a9d8f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .nav-buttons button:hover { background-color: #21867a; }
+  select { margin: 10px; padding: 8px; }
+  .entry { margin: 10px; }
 </style>
 </head>
 <body>
+  <div class="nav-buttons">
+    <button onclick="window.location.href='trainer.html'">← Back</button>
+    <button onclick="logout()">Logout</button>
+  </div>
   <h2>Attendance</h2>
-  <label><input type="checkbox" id="john"> John Smith</label><br>
-  <button onclick="save()">Save Attendance</button><br><br>
-  <button onclick="logout()">Logout</button>
+  <div id="students"></div>
+  <button onclick="save()">Save Attendance</button>
+
   <script>
+    const participants = [ "John Smith", "Emily Davis", "Ryan Chen", "Mia Patel" ];
+    const workshopId = localStorage.getItem('activeWorkshopId');
+    const div = document.getElementById('students');
+
+    participants.forEach(name => {
+      const entry = document.createElement('div');
+      entry.className = 'entry';
+      entry.innerHTML = `
+        <label>${name}: 
+          <select id="status-${name}">
+            <option value="Present">Present</option>
+            <option value="Absent">Absent</option>
+          </select>
+        </label>
+      `;
+      div.appendChild(entry);
+    });
+
     function save() {
-      const att = { john: document.getElementById('john').checked };
-      localStorage.setItem('attendance_w1', JSON.stringify(att));
-      alert('Attendance marked successfully!');
+      const result = {};
+      participants.forEach(name => {
+        const status = document.getElementById(`status-${name}`).value;
+        result[name] = status;
+      });
+      localStorage.setItem(`attendance_${workshopId}`, JSON.stringify(result));
+      alert("Attendance saved successfully!");
     }
+
     function logout() {
       localStorage.clear();
       window.location.href = 'login.html';
