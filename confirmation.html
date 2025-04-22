@@ -1,14 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><title>Confirmation</title>
-<style>body{text-align:center;font-family:Arial;margin-top:50px;}button{padding:10px;}</style>
+<style>
+  body { text-align: center; font-family: Arial; margin-top: 40px; }
+  .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
+  .nav-buttons button {
+    padding: 8px 14px;
+    background-color: #2a9d8f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .nav-buttons button:hover { background-color: #21867a; }
+  .box {
+    padding: 20px;
+    border: 1px solid #ccc;
+    margin: 0 auto;
+    width: 300px;
+    border-radius: 10px;
+    background-color: #f0f0f0;
+  }
+  h2 { color: green; }
+</style>
 </head>
 <body>
-  <h2>Registration Successful</h2>
-  <p>You're registered for Yoga Basics!</p>
-  <button onclick="window.location.href='dashboard.html'">Go to Dashboard</button>
-  <br><br>
-  <button onclick="logout()">Logout</button>
+  <div class="nav-buttons">
+    <button onclick="window.location.href='dashboard.html'">← Back</button>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <div class="box">
+    <h2>Registration Successful!</h2>
+    <p>You are registered for Yoga Basics<br>
+       Date: April 25<br>
+       Time: 10:00 AM<br>
+       Location: Studio A</p>
+  </div>
+
   <script>
     function logout() {
       localStorage.clear();
