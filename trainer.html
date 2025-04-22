@@ -1,16 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><title>Trainer Dashboard</title>
-<style>body{text-align:center;font-family:Arial;margin-top:50px;}button{margin:10px;padding:10px;}</style>
+<style>
+  body { font-family: Arial; padding: 30px; text-align: center; }
+  .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
+  .nav-buttons button {
+    padding: 8px 14px;
+    background-color: #2a9d8f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .nav-buttons button:hover { background-color: #21867a; }
+  .workshop-card {
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin: 20px auto;
+    max-width: 400px;
+    border-radius: 8px;
+    background: #f9f9f9;
+  }
+</style>
 </head>
 <body>
+  <div class="nav-buttons">
+    <span></span>
+    <button onclick="logout()">Logout</button>
+  </div>
+
   <h2>Trainer Dashboard</h2>
-  <p>Workshop: Yoga Basics</p>
-  <button onclick="window.location.href='view_attendance.html'">View Attendance</button>
-  <button onclick="window.location.href='trainer_feedback.html'">View Feedback</button>
-  <br><br>
-  <button onclick="logout()">Logout</button>
+  <div id="trainerWorkshops"></div>
+
   <script>
+    const trainer = { name: "Sarah Johnson" };
+    const workshops = [
+      { id: 'w1', title: 'Yoga Basics', date: 'April 25', time: '10:00 AM', trainer: 'Sarah Johnson' },
+      { id: 'w3', title: 'Pilates Flow', date: 'April 27', time: '9:00 AM', trainer: 'Sarah Johnson' },
+      { id: 'w5', title: 'Stretch & Strength', date: 'April 29', time: '2:00 PM', trainer: 'Sarah Johnson' },
+      { id: 'w6', title: 'Relaxation Techniques', date: 'April 30', time: '11:00 AM', trainer: 'Sarah Johnson' }
+    ];
+
+    const list = document.getElementById('trainerWorkshops');
+    const myWorkshops = workshops.filter(w => w.trainer === trainer.name);
+
+    myWorkshops.forEach(w => {
+      const div = document.createElement('div');
+      div.className = 'workshop-card';
+      div.innerHTML = `
+        <h3>${w.title}</h3>
+        <p><strong>Date:</strong> ${w.date}<br>
+        <strong>Time:</strong> ${w.time}</p>
+        <button onclick="viewAttendance('${w.id}')">View Attendance</button>
+        <button onclick="viewFeedback('${w.id}')">View Feedback</button>
+      `;
+      list.appendChild(div);
+    });
+
+    function viewAttendance(id) {
+      localStorage.setItem('activeWorkshopId', id);
+      window.location.href = 'view_attendance.html';
+    }
+
+    function viewFeedback(id) {
+      localStorage.setItem('activeWorkshopId', id);
+      window.location.href = 'trainer_feedback.html';
+    }
+
     function logout() {
       localStorage.clear();
       window.location.href = 'login.html';
