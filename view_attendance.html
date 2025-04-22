@@ -1,18 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><title>View Attendance</title>
-<style>body{text-align:center;font-family:Arial;margin-top:50px;}label{display:block;margin:10px;}</style>
+<head><meta charset="UTF-8"><title>Attendance</title>
+<style>
+  body { text-align: center; font-family: Arial; margin-top: 40px; }
+  label { display: block; margin: 10px; }
+  button { padding: 10px 20px; background-color: #2a9d8f; color: white; border: none; border-radius: 5px; cursor: pointer; }
+  button:hover { background-color: #21867a; }
+</style>
 </head>
 <body>
-  <h2>Attendance for Yoga Basics</h2>
-  <div id="attendanceList"></div>
+  <h2>Attendance</h2>
+  <label><input type="checkbox" id="john"> John Smith</label><br>
+  <button onclick="save()">Save Attendance</button><br><br>
   <button onclick="logout()">Logout</button>
   <script>
-    const att = JSON.parse(localStorage.getItem('attendance_w1')) || {};
-    const list = document.getElementById('attendanceList');
-    list.innerHTML = `
-      <p>John Smith: ${att.john ? '✔ Attended' : '✖ Absent'}</p>
-    `;
+    function save() {
+      const att = { john: document.getElementById('john').checked };
+      localStorage.setItem('attendance_w1', JSON.stringify(att));
+      alert('Attendance marked successfully!');
+    }
     function logout() {
       localStorage.clear();
       window.location.href = 'login.html';
