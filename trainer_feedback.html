@@ -1,15 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><title>Trainer Feedback</title>
-<style>body{text-align:center;font-family:Arial;margin:40px;}</style>
+<head>
+  <meta charset="UTF-8">
+  <title>Trainer Feedback</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial;
+      margin: 40px;
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .nav-buttons button {
+      padding: 8px 14px;
+      background-color: #2a9d8f;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .nav-buttons button:hover {
+      background-color: #21867a;
+    }
+  </style>
 </head>
 <body>
+  <div class="nav-buttons">
+    <button onclick="goBack()">← Back</button>
+    <button onclick="logout()">Logout</button>
+  </div>
+
   <h2>Workshop Feedback</h2>
   <div id="comments"></div>
-  <button onclick="logout()">Logout</button>
+
   <script>
     const data = JSON.parse(localStorage.getItem('feedback_w1'));
     const div = document.getElementById('comments');
+
     if (!data || !data.comment) {
       div.innerHTML = "<p>No feedback submitted yet.</p>";
     } else {
@@ -18,9 +48,14 @@
         <p><strong>Comment:</strong> "${data.comment}"</p>
       `;
     }
+
     function logout() {
       localStorage.clear();
       window.location.href = 'login.html';
+    }
+
+    function goBack() {
+      window.location.href = 'trainer.html';
     }
   </script>
 </body>
