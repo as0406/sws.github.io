@@ -1,27 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><title>Trainer Dashboard</title>
-<style>
-  body { font-family: Arial; padding: 30px; text-align: center; }
-  .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
-  .nav-buttons button {
-    padding: 8px 14px;
-    background-color: #2a9d8f;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  .nav-buttons button:hover { background-color: #21867a; }
-  .workshop-card {
-    border: 1px solid #ccc;
-    padding: 15px;
-    margin: 20px auto;
-    max-width: 400px;
-    border-radius: 8px;
-    background: #f9f9f9;
-  }
-</style>
+<head>
+  <meta charset="UTF-8">
+  <title>Trainer Dashboard</title>
+  <style>
+    body { font-family: Arial; padding: 30px; text-align: center; }
+    .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
+    .nav-buttons button {
+      padding: 8px 14px;
+      background-color: #2a9d8f;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .nav-buttons button:hover { background-color: #21867a; }
+    .workshop-card {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin: 20px auto;
+      max-width: 400px;
+      border-radius: 8px;
+      background: #f9f9f9;
+    }
+  </style>
+  <script src="workshops-data.js"></script>
 </head>
 <body>
   <div class="nav-buttons">
@@ -34,13 +37,6 @@
 
   <script>
     const trainer = { name: "Sarah Johnson" };
-    const workshops = [
-      { id: 'w1', title: 'Yoga Basics', date: 'April 25', time: '10:00 AM', trainer: 'Sarah Johnson' },
-      { id: 'w3', title: 'Pilates Flow', date: 'April 27', time: '9:00 AM', trainer: 'Sarah Johnson' },
-      { id: 'w5', title: 'Stretch & Strength', date: 'April 29', time: '2:00 PM', trainer: 'Sarah Johnson' },
-      { id: 'w6', title: 'Relaxation Techniques', date: 'April 30', time: '11:00 AM', trainer: 'Sarah Johnson' }
-    ];
-
     const list = document.getElementById('trainerWorkshops');
     const myWorkshops = workshops.filter(w => w.trainer === trainer.name);
 
