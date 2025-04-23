@@ -57,10 +57,14 @@
         return;
       }
       const id = selected.value;
+      const selectedWorkshop = workshops.find(w => w.id === id);
+      localStorage.setItem('lastRegisteredWorkshop', JSON.stringify(selectedWorkshop));
+
       if (!user.registeredWorkshops.includes(id)) {
         user.registeredWorkshops.push(id);
         localStorage.setItem('user', JSON.stringify(user));
       }
+
       window.location.href = 'confirmation.html';
     }
 
