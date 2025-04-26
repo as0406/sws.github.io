@@ -1,53 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><title>Confirmation</title>
-<style>
-  body { text-align: center; font-family: Arial; margin-top: 40px; }
-  .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
-  .nav-buttons button {
-    padding: 8px 14px;
-    background-color: #2a9d8f;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  .nav-buttons button:hover { background-color: #21867a; }
-  .box {
-    padding: 20px;
-    border: 1px solid #ccc;
-    margin: 0 auto;
-    width: 300px;
-    border-radius: 10px;
-    background-color: #f0f0f0;
-  }
-  h2 { color: green; }
-</style>
+<head>
+  <meta charset="UTF-8">
+  <title>Registration Confirmation</title>
+  <style>
+    body { font-family: Arial; padding: 30px; text-align: center; }
+    .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
+    .nav-buttons button {
+      padding: 8px 14px;
+      background-color: #2a9d8f;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .nav-buttons button:hover { background-color: #21867a; }
+    .confirmation-box {
+      border: 1px solid #ccc;
+      padding: 20px;
+      margin: 30px auto;
+      max-width: 400px;
+      border-radius: 8px;
+      background: #f9f9f9;
+      text-align: left;
+    }
+  </style>
 </head>
 <body>
   <div class="nav-buttons">
-    <button onclick="window.location.href='dashboard.html'">← Back</button>
+    <button onclick="goDashboard()">← Dashboard</button>
     <button onclick="logout()">Logout</button>
   </div>
 
-  <div class="box" id="confirmationBox">
-    <!-- Filled by JS -->
-  </div>
+  <h2>Registration Confirmed!</h2>
+  <div class="confirmation-box" id="confirmationDetails"></div>
 
   <script>
-    const w = JSON.parse(localStorage.getItem('lastRegisteredWorkshop'));
-    const div = document.getElementById('confirmationBox');
+    const workshop = JSON.parse(localStorage.getItem('lastRegisteredWorkshop'));
 
-    if (w) {
-      div.innerHTML = `
-        <h2>Registration Successful!</h2>
-        <p>You are registered for <strong>${w.title}</strong><br>
-        Date: ${w.date}<br>
-        Time: ${w.time}<br>
-        Location: ${w.location}</p>
+    const detailsDiv = document.getElementById('confirmationDetails');
+
+    if (workshop) {
+      detailsDiv.innerHTML = `
+        <p><strong>Workshop:</strong> ${workshop.title}</p>
+        <p><strong>Date:</strong> ${workshop.date}</p>
+        <p><strong>Time:</strong> ${workshop.time}</p>
+        <p><strong>Location:</strong> ${workshop.location}</p>
+        <p><strong>Price Paid:</strong> ${workshop.price}</p>
       `;
     } else {
-      div.innerHTML = "<h2>Error</h2><p>No recent registration found.</p>";
+      detailsDiv.innerHTML = "<p>No registration data available.</p>";
+    }
+
+    function goDashboard() {
+      window.location.href = 'dashboard.html';
     }
 
     function logout() {
