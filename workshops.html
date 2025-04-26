@@ -15,35 +15,49 @@
       cursor: pointer;
     }
     .nav-buttons button:hover { background-color: #21867a; }
-    .workshop { border: 1px solid #ccc; padding: 15px; margin: 20px auto; max-width: 450px; border-radius: 8px; background: #f9f9f9; text-align: left; }
+    .workshop {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin: 20px auto;
+      max-width: 450px;
+      border-radius: 8px;
+      background: #f9f9f9;
+      text-align: left;
+    }
   </style>
-  <script src="workshops-data.js"></script>
 </head>
 <body>
   <div class="nav-buttons">
-    <button onclick="window.location.href='dashboard.html'">← Back</button>
+    <button onclick="goDashboard()">← Dashboard</button>
     <button onclick="logout()">Logout</button>
   </div>
+
   <h2>Select a Workshop to Register</h2>
   <form id="workshopForm"></form>
   <button onclick="submitSelection()">Register</button>
 
   <script>
     const user = JSON.parse(localStorage.getItem('user'));
+    const workshops = JSON.parse(localStorage.getItem('workshops')) || [];
     const form = document.getElementById('workshopForm');
 
     workshops.forEach(w => {
-      const div = document.createElement('div');
-      div.className = 'workshop';
-      div.innerHTML = `
-        <label>
-          <input type="radio" name="selectedWorkshop" value="${w.id}">
-          <strong>${w.title}</strong><br>
-          Date: ${w.date} &nbsp;&nbsp; Time: ${w.time}<br>
-          Location: ${w.location} &nbsp;&nbsp; Price: ${w.price}
-        </label>
-      `;
-      form.appendChild(div);
+      if (w.status === "Open") {
+        const div = document.createElement('div');
+        div.className = 'workshop';
+        div.innerHTML = `
+          <label>
+            <input type="radio" name="selectedWorkshop" value="${w.id}">
+            <strong>${w.title}</strong><br>
+            Date: ${w.date} | Time: ${w.time}<br>
+            Location: ${w.location}<br>
+            Price: ${w.price}<br>
+            Status: ${w.status}<br>
+            Spots Left: ${w.capacity}
+          </label>
+        `;
+        form.appendChild(div);
+      }
     });
 
     function submitSelection() {
@@ -54,14 +68,26 @@
       }
       const id = selected.value;
       const selectedWorkshop = workshops.find(w => w.id === id);
-      localStorage.setItem('lastRegisteredWorkshop', JSON.stringify(selectedWorkshop));
 
       if (!user.registeredWorkshops.includes(id)) {
         user.registeredWorkshops.push(id);
         localStorage.setItem('user', JSON.stringify(user));
       }
 
+      if (selectedWorkshop.capacity > 0) {
+        selectedWorkshop.capacity--;
+        if (selectedWorkshop.capacity === 0) {
+          selectedWorkshop.status = "Full";
+        }
+      }
+      localStorage.setItem('workshops', JSON.stringify(workshops));
+      localStorage.setItem('lastRegisteredWorkshop', JSON.stringify(selectedWorkshop));
+
       window.location.href = 'confirmation.html';
+    }
+
+    function goDashboard() {
+      window.location.href = 'dashboard.html';
     }
 
     function logout() {
