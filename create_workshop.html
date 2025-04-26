@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Workshop</title>
+  <style>
+    body { font-family: Arial; padding: 20px; text-align: center; }
+    form { max-width: 400px; margin: 20px auto; }
+    input, button, select {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button { background-color: #2a9d8f; color: white; border: none; cursor: pointer; }
+    button:hover { background-color: #21867a; }
+    .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+  <div class="nav-buttons">
+    <button onclick="goBack()">← Back</button>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <h2>Create a New Workshop</h2>
+  <form id="createForm">
+    <input type="text" id="title" placeholder="Workshop Title" required>
+    <input type="text" id="date" placeholder="Date (e.g., May 5)" required>
+    <input type="text" id="time" placeholder="Time (e.g., 10:00 AM)" required>
+    <input type="text" id="location" placeholder="Location" required>
+    <input type="number" id="price" placeholder="Price (e.g., 15)" required>
+    <input type="number" id="capacity" placeholder="Capacity (e.g., 10)" required>
+    <button type="submit">Create Workshop</button>
+  </form>
+
+  <script>
+    const workshops = JSON.parse(localStorage.getItem('workshops')) || [];
+
+    document.getElementById('createForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const newWorkshop = {
+        id: 'w' + (workshops.length + 1),
+        title: document.getElementById('title').value,
+        date: document.getElementById('date').value,
+        time: document.getElementById('time').value,
+        location: document.getElementById('location').value,
+        price: '$' + document.getElementById('price').value,
+        capacity: parseInt(document.getElementById('capacity').value),
+        status: 'Open',
+        trainer: 'Sarah Johnson'
+      };
+      workshops.push(newWorkshop);
+      localStorage.setItem('workshops', JSON.stringify(workshops));
+      alert('Workshop created successfully!');
+      window.location.href = 'trainer.html';
+    });
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'login.html';
+    }
+
+    function goBack() {
+      window.location.href = 'trainer.html';
+    }
+  </script>
+</body>
+</html>
