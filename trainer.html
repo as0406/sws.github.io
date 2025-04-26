@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Trainer Dashboard</title>
   <style>
-    body { font-family: Arial; padding: 30px; text-align: center; }
+    body { font-family: Arial; padding: 20px; text-align: center; }
     .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
     .nav-buttons button {
       padding: 8px 14px;
@@ -19,16 +19,15 @@
       border: 1px solid #ccc;
       padding: 15px;
       margin: 20px auto;
-      max-width: 400px;
+      max-width: 450px;
       border-radius: 8px;
       background: #f9f9f9;
     }
   </style>
-  <script src="workshops-data.js"></script>
 </head>
 <body>
   <div class="nav-buttons">
-    <span></span>
+    <button onclick="createWorkshop()">Create Workshop</button>
     <button onclick="logout()">Logout</button>
   </div>
 
@@ -37,7 +36,9 @@
 
   <script>
     const trainer = { name: "Sarah Johnson" };
+    const workshops = JSON.parse(localStorage.getItem('workshops')) || [];
     const list = document.getElementById('trainerWorkshops');
+
     const myWorkshops = workshops.filter(w => w.trainer === trainer.name);
 
     myWorkshops.forEach(w => {
@@ -45,13 +46,22 @@
       div.className = 'workshop-card';
       div.innerHTML = `
         <h3>${w.title}</h3>
-        <p><strong>Date:</strong> ${w.date}<br>
-        <strong>Time:</strong> ${w.time}</p>
-        <button onclick="viewAttendance('${w.id}')">View Attendance</button>
-        <button onclick="viewFeedback('${w.id}')">View Feedback</button>
+        <p>
+          <strong>Date:</strong> ${w.date}<br>
+          <strong>Time:</strong> ${w.time}<br>
+          <strong>Location:</strong> ${w.location}<br>
+          <strong>Status:</strong> ${w.status}<br>
+          <button onclick="viewAttendance('${w.id}')">View Attendance</button>
+          <button onclick="viewFeedback('${w.id}')">View Feedback</button>
+          <button onclick="cancelWorkshop('${w.id}')">Cancel Workshop</button>
+        </p>
       `;
       list.appendChild(div);
     });
+
+    function createWorkshop() {
+      window.location.href = 'create_workshop.html';
+    }
 
     function viewAttendance(id) {
       localStorage.setItem('activeWorkshopId', id);
@@ -61,6 +71,19 @@
     function viewFeedback(id) {
       localStorage.setItem('activeWorkshopId', id);
       window.location.href = 'trainer_feedback.html';
+    }
+
+    function cancelWorkshop(id) {
+      if (!confirm('Are you sure you want to cancel this workshop?')) return;
+
+      const workshops = JSON.parse(localStorage.getItem('workshops'));
+      const workshop = workshops.find(w => w.id === id);
+      if (workshop) {
+        workshop.status = "Cancelled";
+        localStorage.setItem('workshops', JSON.stringify(workshops));
+        alert('Workshop marked as Cancelled.');
+        window.location.reload();
+      }
     }
 
     function logout() {
