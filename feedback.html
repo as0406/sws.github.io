@@ -1,65 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><title>Feedback</title>
-<style>
-  body { text-align: center; font-family: Arial; margin-top: 40px; }
-  .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
-  .nav-buttons button {
-    padding: 8px 14px;
-    background-color: #2a9d8f;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  .nav-buttons button:hover { background-color: #21867a; }
-  input, textarea {
-    margin: 10px;
-    padding: 10px;
-    width: 300px;
-  }
-  button.submit {
-    margin-top: 10px;
-    padding: 10px 20px;
-    background-color: #2a9d8f;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  button.submit:hover { background-color: #21867a; }
-</style>
+<head>
+  <meta charset="UTF-8">
+  <title>Submit Feedback</title>
+  <style>
+    body { font-family: Arial; padding: 20px; text-align: center; }
+    form { max-width: 400px; margin: 20px auto; }
+    input, textarea, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #2a9d8f;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover { background-color: #21867a; }
+    .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
+  </style>
 </head>
 <body>
   <div class="nav-buttons">
-    <button onclick="window.location.href='dashboard.html'">← Back</button>
+    <button onclick="goBack()">← Dashboard</button>
     <button onclick="logout()">Logout</button>
   </div>
 
-  <h2>Workshop Feedback</h2>
-  <div id="form"></div>
+  <h2>Submit Feedback</h2>
+
+  <div id="workshopInfo"></div>
+
+  <form id="feedbackForm">
+    <input type="number" id="rating" placeholder="Rating (1-5)" min="1" max="5" required>
+    <textarea id="comment" placeholder="Write your comments..." required></textarea>
+    <button type="submit">Submit Feedback</button>
+  </form>
 
   <script>
+    const workshops = JSON.parse(localStorage.getItem('workshops')) || [];
     const user = JSON.parse(localStorage.getItem('user'));
-    if (!user.registeredWorkshops.includes('w1')) {
-      document.getElementById('form').innerHTML = '<p>You must attend before submitting feedback.</p>';
-    } else {
-      document.getElementById('form').innerHTML = `
-        <input id='rating' type='number' min='1' max='5' placeholder='Rating (1-5)'><br>
-        <textarea id='comment' placeholder='Your experience...'></textarea><br>
-        <button class="submit" onclick='submit()'>Submit</button>
+    const workshopId = localStorage.getItem('feedbackWorkshopId');
+    const currentWorkshop = workshops.find(w => w.id === workshopId);
+
+    const workshopInfo = document.getElementById('workshopInfo');
+
+    if (currentWorkshop) {
+      workshopInfo.innerHTML = `
+        <p><strong>Workshop:</strong> ${currentWorkshop.title}</p>
+        <p><strong>Date:</strong> ${currentWorkshop.date}</p>
       `;
+    } else {
+      workshopInfo.innerHTML = "<p>Workshop information not found.</p>";
     }
 
-    function submit() {
+    document.getElementById('feedbackForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+
       const rating = document.getElementById('rating').value;
       const comment = document.getElementById('comment').value;
-      if (!rating || rating < 1 || rating > 5 || !comment) {
-        alert("Please provide a valid rating and comment.");
-        return;
-      }
-      localStorage.setItem('feedback_w1', JSON.stringify({ rating, comment }));
-      alert('Feedback submitted successfully!');
+
+      const feedbackKey = 'feedback_' + workshopId;
+      const feedback = { rating: rating, comment: comment };
+      localStorage.setItem(feedbackKey, JSON.stringify(feedback));
+
+      alert('Feedback submitted! Thank you.');
+      window.location.href = 'dashboard.html';
+    });
+
+    function goBack() {
       window.location.href = 'dashboard.html';
     }
 
