@@ -28,9 +28,13 @@
   <div id="registeredWorkshops"></div>
 
   <script>
-    const user = JSON.parse(localStorage.getItem('user'));
-    const allWorkshops = JSON.parse(localStorage.getItem('workshops')) || [];
+    let user = JSON.parse(localStorage.getItem('user'));
+    let allWorkshops = JSON.parse(localStorage.getItem('workshops')) || [];
     const list = document.getElementById('registeredWorkshops');
+
+    if (!user.attendedWorkshops) {
+      user.attendedWorkshops = [];
+    }
 
     function displayRegistered() {
       list.innerHTML = '';
@@ -50,12 +54,23 @@
             Location: ${w.location}<br>
             Price: ${w.price}<br>
             Status: ${w.status}<br><br>
+            ${user.attendedWorkshops.includes(id) ? 
+              `<button onclick="giveFeedback('${id}')">Submit Feedback</button>` :
+              `<button onclick="markAttended('${id}')">Mark as Attended</button>`
+            }
             <button onclick="cancelRegistration('${id}')">Cancel Registration</button>
-            <button onclick="giveFeedback('${id}')">Submit Feedback</button>
           `;
           list.appendChild(div);
         }
       });
+    }
+
+    function markAttended(id) {
+      if (!confirm('Confirm you have attended this workshop?')) return;
+      user.attendedWorkshops.push(id);
+      localStorage.setItem('user', JSON.stringify(user));
+      alert('Attendance marked. You can now leave feedback.');
+      displayRegistered();
     }
 
     function cancelRegistration(id) {
@@ -64,6 +79,13 @@
       const index = user.registeredWorkshops.indexOf(id);
       if (index > -1) {
         user.registeredWorkshops.splice(index, 1);
+
+        // Also remove from attended if already marked
+        const attendIndex = user.attendedWorkshops.indexOf(id);
+        if (attendIndex > -1) {
+          user.attendedWorkshops.splice(attendIndex, 1);
+        }
+
         localStorage.setItem('user', JSON.stringify(user));
 
         const workshops = JSON.parse(localStorage.getItem('workshops'));
