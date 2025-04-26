@@ -1,82 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><title>Dashboard</title>
-<style>
-  body { font-family: Arial; padding: 30px; }
-  .nav-buttons { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-  .nav-buttons button {
-    padding: 8px 14px;
-    background-color: #2a9d8f;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  .nav-buttons button:hover { background-color: #21867a; }
-  .workshop { border: 1px solid #ccc; padding: 15px; margin: 20px auto; max-width: 450px; border-radius: 8px; background: #f9f9f9; }
-  h2, h3 { text-align: center; }
-</style>
+<head>
+  <meta charset="UTF-8">
+  <title>Customer Dashboard</title>
+  <style>
+    body { font-family: Arial; padding: 20px; text-align: center; }
+    .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
+    .nav-buttons button {
+      padding: 8px 14px;
+      background-color: #2a9d8f;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .nav-buttons button:hover { background-color: #21867a; }
+    .workshop { border: 1px solid #ccc; padding: 15px; margin: 20px auto; max-width: 450px; border-radius: 8px; background: #f9f9f9; text-align: left; }
+  </style>
 </head>
 <body>
   <div class="nav-buttons">
-    <span></span>
+    <button onclick="browseWorkshops()">Browse Workshops</button>
     <button onclick="logout()">Logout</button>
   </div>
 
-  <h2>Your Registered Workshops</h2>
-  <div id="list"></div>
-
-  <hr>
-  <h3>Looking for more?</h3>
-  <button onclick="window.location.href='workshops.html'">Browse Available Workshops</button>
+  <h2>My Registered Workshops</h2>
+  <div id="registeredWorkshops"></div>
 
   <script>
-    const allWorkshops = {
-      'w1': { title: 'Yoga Basics', date: 'April 25', time: '10:00 AM', location: 'Studio A', price: '$10' },
-      'w2': { title: 'HIIT Bootcamp', date: 'April 26', time: '12:00 PM', location: 'Gym Hall', price: '$15' },
-      'w3': { title: 'Pilates Flow', date: 'April 27', time: '9:00 AM', location: 'Studio B', price: '$12' },
-      'w4': { title: 'Zumba Energy', date: 'April 28', time: '6:00 PM', location: 'Main Hall', price: '$10' }
-    };
-
     const user = JSON.parse(localStorage.getItem('user'));
-    const container = document.getElementById('list');
+    const allWorkshops = JSON.parse(localStorage.getItem('workshops')) || [];
+    const list = document.getElementById('registeredWorkshops');
 
-    if (user.registeredWorkshops.length === 0) {
-      container.innerHTML = "<p style='text-align:center;'>No registered workshops yet.</p>";
-    } else {
+    function displayRegistered() {
+      list.innerHTML = '';
+      if (!user.registeredWorkshops.length) {
+        list.innerHTML = "<p>No workshops registered.</p>";
+        return;
+      }
+
       user.registeredWorkshops.forEach(id => {
-        const w = allWorkshops[id];
-        const div = document.createElement('div');
-        div.className = 'workshop';
-        div.id = `card-${id}`;
-        div.innerHTML = `<h3>${w.title}</h3>
-          <p>Date: ${w.date}</p>
-          <p>Time: ${w.time}</p>
-          <p>Location: ${w.location}</p>
-          <p>Price: ${w.price}</p>
-          <button onclick="feedback()">Submit Feedback</button>
-          <button onclick="cancel('${id}')">Cancel Registration</button>`;
-        container.appendChild(div);
+        const w = allWorkshops.find(w => w.id === id);
+        if (w) {
+          const div = document.createElement('div');
+          div.className = 'workshop';
+          div.innerHTML = `
+            <strong>${w.title}</strong><br>
+            Date: ${w.date} | Time: ${w.time}<br>
+            Location: ${w.location}<br>
+            Price: ${w.price}<br>
+            Status: ${w.status}<br><br>
+            <button onclick="cancelRegistration('${id}')">Cancel Registration</button>
+            <button onclick="giveFeedback('${id}')">Submit Feedback</button>
+          `;
+          list.appendChild(div);
+        }
       });
     }
 
-    function cancel(id) {
-      if (!confirm("Are you sure you want to cancel this registration?")) return;
-      user.registeredWorkshops = user.registeredWorkshops.filter(w => w !== id);
-      localStorage.setItem('user', JSON.stringify(user));
-      const card = document.getElementById(`card-${id}`);
-      if (card) card.remove();
-      alert("Your registration has been successfully cancelled.");
+    function cancelRegistration(id) {
+      if (!confirm('Are you sure you want to cancel your registration?')) return;
+
+      const index = user.registeredWorkshops.indexOf(id);
+      if (index > -1) {
+        user.registeredWorkshops.splice(index, 1);
+        localStorage.setItem('user', JSON.stringify(user));
+
+        const workshops = JSON.parse(localStorage.getItem('workshops'));
+        const workshop = workshops.find(w => w.id === id);
+        if (workshop && workshop.capacity !== undefined) {
+          workshop.capacity++;
+          if (workshop.status === "Full" && workshop.capacity > 0) {
+            workshop.status = "Open";
+          }
+          localStorage.setItem('workshops', JSON.stringify(workshops));
+        }
+
+        alert('Registration cancelled.');
+        displayRegistered();
+      }
     }
 
-    function feedback() {
+    function giveFeedback(id) {
+      localStorage.setItem('feedbackWorkshopId', id);
       window.location.href = 'feedback.html';
+    }
+
+    function browseWorkshops() {
+      window.location.href = 'workshops.html';
     }
 
     function logout() {
       localStorage.clear();
       window.location.href = 'login.html';
     }
+
+    displayRegistered();
   </script>
 </body>
 </html>
