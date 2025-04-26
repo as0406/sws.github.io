@@ -37,6 +37,16 @@
   <button onclick="submitSelection()">Register</button>
 
   <script>
+    if (!localStorage.getItem('workshops')) {
+      const starterWorkshops = [
+        { id: 'w1', title: 'Yoga Basics', date: 'April 25', time: '10:00 AM', location: 'Studio A', price: '$10', trainer: 'Sarah Johnson', capacity: 10, status: "Open" },
+        { id: 'w2', title: 'HIIT Bootcamp', date: 'April 26', time: '12:00 PM', location: 'Gym Hall', price: '$15', trainer: 'Sarah Johnson', capacity: 8, status: "Open" },
+        { id: 'w3', title: 'Pilates Flow', date: 'April 27', time: '9:00 AM', location: 'Studio B', price: '$12', trainer: 'Sarah Johnson', capacity: 12, status: "Open" },
+        { id: 'w4', title: 'Zumba Energy', date: 'April 28', time: '6:00 PM', location: 'Main Hall', price: '$10', trainer: 'Sarah Johnson', capacity: 15, status: "Open" }
+      ];
+      localStorage.setItem('workshops', JSON.stringify(starterWorkshops));
+    }
+
     const user = JSON.parse(localStorage.getItem('user'));
     const workshops = JSON.parse(localStorage.getItem('workshops')) || [];
     const form = document.getElementById('workshopForm');
