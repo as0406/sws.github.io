@@ -17,11 +17,11 @@
     .nav-buttons button:hover { background-color: #21867a; }
     .workshop {
       border: 1px solid #ccc;
-      padding: 15px;
+      padding: 20px;
       margin: 20px auto;
       max-width: 450px;
       border-radius: 8px;
-      background: #fff;
+      background: #ffffff;
       text-align: center;
     }
   </style>
@@ -33,22 +33,23 @@
 </div>
 
 <h2>Trainer Dashboard</h2>
-<div id="trainerWorkshops"></div>
+<div id="trainerWorkshops">Loading workshops...</div>
 
 <script>
 const user = JSON.parse(localStorage.getItem('user'));
 const workshops = JSON.parse(localStorage.getItem('workshops')) || [];
+const container = document.getElementById('trainerWorkshops');
 
 const myWorkshops = workshops.filter(w => w.trainer === user.name);
-const div = document.getElementById('trainerWorkshops');
 
 if (myWorkshops.length === 0) {
-  div.innerHTML = "<p>No workshops assigned yet.</p>";
+  container.innerHTML = "<p>No workshops assigned.</p>";
 } else {
+  container.innerHTML = '';
   myWorkshops.forEach(w => {
-    const box = document.createElement('div');
-    box.className = 'workshop';
-    box.innerHTML = `
+    const div = document.createElement('div');
+    div.className = 'workshop';
+    div.innerHTML = `
       <h3>${w.title}</h3>
       <p><strong>Date:</strong> ${w.date}</p>
       <p><strong>Time:</strong> ${w.time}</p>
@@ -56,17 +57,17 @@ if (myWorkshops.length === 0) {
       <button onclick="viewAttendance('${w.id}')">View Attendance</button>
       <button onclick="viewFeedback('${w.id}')">View Feedback</button>
     `;
-    div.appendChild(box);
+    container.appendChild(div);
   });
 }
 
-function viewAttendance(workshopId) {
-  localStorage.setItem('currentWorkshop', workshopId);
+function viewAttendance(id) {
+  localStorage.setItem('currentWorkshop', id);
   window.location.href = 'view_attendance.html';
 }
 
-function viewFeedback(workshopId) {
-  localStorage.setItem('currentWorkshop', workshopId);
+function viewFeedback(id) {
+  localStorage.setItem('currentWorkshop', id);
   window.location.href = 'trainer_feedback.html';
 }
 
