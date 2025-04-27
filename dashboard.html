@@ -1,108 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Dashboard</title>
-  <style>
-    body { font-family: Arial; padding: 30px; text-align: center; background-color: #f5f5f5; }
-    .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
-    .nav-buttons button {
-      padding: 8px 14px;
-      background-color: #2a9d8f;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .nav-buttons button:hover { background-color: #21867a; }
-    .registered-workshop {
-      border: 1px solid #ccc;
-      padding: 20px;
-      margin: 20px auto;
-      max-width: 450px;
-      border-radius: 8px;
-      background: #ffffff;
-      text-align: left;
-    }
-  </style>
-</head>
-<body>
-
-<div class="nav-buttons">
-  <button onclick="window.location.href='workshops.html'">Available Workshops</button>
-  <button onclick="logout()">Logout</button>
-</div>
-
-<h2>Your Registered Workshops</h2>
-
-<div id="registeredWorkshops">
-  Loading your workshops...
-</div>
-
 <script>
-  const user = JSON.parse(localStorage.getItem('user'));
-  const workshops = JSON.parse(localStorage.getItem('workshops')) || [];
+const user = JSON.parse(localStorage.getItem('user'));
+const workshops = JSON.parse(localStorage.getItem('workshops')) || [];
+const registeredWorkshops = workshops.filter(w => user.registeredWorkshops.includes(w.id));
 
-  const container = document.getElementById('registeredWorkshops');
+const div = document.getElementById('dashboardWorkshops');
 
-  if (!user || !user.registeredWorkshops || user.registeredWorkshops.length === 0) {
-    container.innerHTML = "<p>You have not registered for any workshops yet.</p>";
-  } else {
-    user.registeredWorkshops.forEach(id => {
-      const workshop = workshops.find(w => w.id === id);
-      if (workshop) {
-        const div = document.createElement('div');
-        div.className = 'registered-workshop';
-        div.innerHTML = `
-          <h3>${workshop.title}</h3>
-          <p><strong>Date:</strong> ${workshop.date}</p>
-          <p><strong>Time:</strong> ${workshop.time}</p>
-          <p><strong>Location:</strong> ${workshop.location}</p>
-          <p><strong>Price:</strong> ${workshop.price}</p>
-          <p><strong>Trainer:</strong> ${workshop.trainer}</p>
-          <button onclick="markAsAttended('${workshop.id}')">Mark as Attended</button>
-          <button onclick="cancelWorkshop('${workshop.id}')">Cancel Registration</button>
-        `;
-        container.appendChild(div);
-      }
-    });
-  }
-
-  function logout() {
-    localStorage.clear();
-    window.location.href = 'login.html';
-  }
-
-  function cancelWorkshop(workshopId) {
-    if (!confirm("Are you sure you want to cancel registration for this workshop?")) return;
-
-    const index = user.registeredWorkshops.indexOf(workshopId);
-    if (index > -1) {
-      user.registeredWorkshops.splice(index, 1);
-      localStorage.setItem('user', JSON.stringify(user));
-      
-      const workshopsList = JSON.parse(localStorage.getItem('workshops')) || [];
-      const workshop = workshopsList.find(w => w.id === workshopId);
-      if (workshop) {
-        workshop.capacity++;
-        if (workshop.participants) {
-          const participantIndex = workshop.participants.indexOf(user.name);
-          if (participantIndex > -1) {
-            workshop.participants.splice(participantIndex, 1);
-          }
-        }
-        localStorage.setItem('workshops', JSON.stringify(workshopsList));
-      }
-      
-      window.location.reload();
-    }
-  }
-
-  function markAsAttended(workshopId) {
-    localStorage.setItem('attendedWorkshop', workshopId);
-    window.location.href = 'feedback.html';
-  }
+if (registeredWorkshops.length === 0) {
+  div.innerHTML = "<p>You have not registered for any workshops yet.</p>";
+} else {
+  registeredWorkshops.forEach(w => {
+    const box = document.createElement('div');
+    box.className = 'workshop';
+    box.innerHTML = `
+      <h3>${w.title}</h3>
+      <p><strong>Date:</strong> ${w.date}</p>
+      <p><strong>Time:</strong> ${w.time}</p>
+      <p><strong>Location:</strong> ${w.location}</p>
+      <p><strong>Trainer:</strong> ${w.trainer}</p>
+    `;
+    div.appendChild(box);
+  });
+}
 </script>
-
-</body>
-</html>
