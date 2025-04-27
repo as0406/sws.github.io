@@ -1,25 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><title>Login</title>
-<style>body{text-align:center;font-family:Arial;margin-top:50px;}input,button{margin:10px;padding:10px;}</style>
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <style>
+    body { text-align: center; font-family: Arial; padding-top: 100px; background-color: #f5f5f5; }
+    input, button { padding: 10px; margin: 5px; }
+    button { background-color: #2a9d8f; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    button:hover { background-color: #21867a; }
+  </style>
 </head>
 <body>
-  <h2>Login</h2>
-  <input id="email" placeholder="Email"><br>
+  <h2>Login to Stay Well Studio</h2>
+  <input id="email" type="email" placeholder="Email"><br>
   <input id="password" type="password" placeholder="Password"><br>
   <button onclick="login()">Login</button>
+
   <script>
+    const users = [
+      { email: "john@example.com", password: "test123", name: "John Doe", role: "customer", registeredWorkshops: [], attendedWorkshops: [] },
+      { email: "sarah@example.com", password: "trainer1", name: "Sarah Johnson", role: "trainer" }
+    ];
+
     function login() {
       const email = document.getElementById('email').value;
-      const pass = document.getElementById('password').value;
-      if (email === 'john@example.com' && pass === 'test123') {
-        localStorage.setItem('user', JSON.stringify({ role: 'customer', name: 'John Smith', registeredWorkshops: [] }));
-        window.location.href = 'workshops.html';
-      } else if (email === 'sarah@example.com' && pass === 'trainer1') {
-        localStorage.setItem('user', JSON.stringify({ role: 'trainer', name: 'Sarah Johnson', registeredWorkshops: [] }));
-        window.location.href = 'trainer.html';
+      const password = document.getElementById('password').value;
+      const user = users.find(u => u.email === email && u.password === password);
+
+      if (user) {
+        localStorage.setItem('user', JSON.stringify(user));
+        if (user.role === "trainer") {
+          window.location.href = 'trainer.html';
+        } else {
+          window.location.href = 'dashboard.html';
+        }
       } else {
-        alert('Invalid login!');
+        alert("Invalid credentials!");
       }
     }
   </script>
