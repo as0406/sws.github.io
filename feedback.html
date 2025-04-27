@@ -4,80 +4,56 @@
   <meta charset="UTF-8">
   <title>Submit Feedback</title>
   <style>
-    body { font-family: Arial; padding: 20px; text-align: center; }
-    form { max-width: 400px; margin: 20px auto; }
-    input, textarea, button {
-      width: 100%;
+    body { font-family: Arial; padding: 30px; text-align: center; background-color: #f5f5f5; }
+    form { background: white; padding: 20px; max-width: 400px; margin: auto; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    input, textarea {
+      width: 90%;
       padding: 10px;
       margin: 10px 0;
       border-radius: 5px;
       border: 1px solid #ccc;
     }
     button {
+      padding: 10px 20px;
       background-color: #2a9d8f;
       color: white;
       border: none;
+      border-radius: 5px;
       cursor: pointer;
+      margin-top: 10px;
     }
     button:hover { background-color: #21867a; }
-    .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
   </style>
 </head>
 <body>
-  <div class="nav-buttons">
-    <button onclick="goBack()">← Dashboard</button>
-    <button onclick="logout()">Logout</button>
-  </div>
 
-  <h2>Submit Feedback</h2>
+<h2>Submit Your Feedback</h2>
 
-  <div id="workshopInfo"></div>
+<form onsubmit="submitFeedback(event)">
+  <input type="number" id="rating" placeholder="Rating (1-5)" min="1" max="5" required><br>
+  <textarea id="comment" placeholder="Your comments..." required></textarea><br>
+  <button type="submit">Submit</button>
+</form>
 
-  <form id="feedbackForm">
-    <input type="number" id="rating" placeholder="Rating (1-5)" min="1" max="5" required>
-    <textarea id="comment" placeholder="Write your comments..." required></textarea>
-    <button type="submit">Submit Feedback</button>
-  </form>
+<script>
+function submitFeedback(e) {
+  e.preventDefault();
+  const rating = document.getElementById('rating').value;
+  const comment = document.getElementById('comment').value;
+  const workshopId = localStorage.getItem('feedbackWorkshopId');
 
-  <script>
-    const workshops = JSON.parse(localStorage.getItem('workshops')) || [];
-    const user = JSON.parse(localStorage.getItem('user'));
-    const workshopId = localStorage.getItem('feedbackWorkshopId');
-    const currentWorkshop = workshops.find(w => w.id === workshopId);
+  if (!workshopId) {
+    alert("No workshop selected for feedback!");
+    return;
+  }
 
-    const workshopInfo = document.getElementById('workshopInfo');
+  const feedback = { rating, comment };
+  localStorage.setItem('feedback_' + workshopId, JSON.stringify(feedback));
 
-    if (currentWorkshop) {
-      workshopInfo.innerHTML = `
-        <p><strong>Workshop:</strong> ${currentWorkshop.title}</p>
-        <p><strong>Date:</strong> ${currentWorkshop.date}</p>
-      `;
-    } else {
-      workshopInfo.innerHTML = "<p>Workshop information not found.</p>";
-    }
+  alert("Feedback submitted successfully!");
+  window.location.href = 'dashboard.html';
+}
+</script>
 
-    document.getElementById('feedbackForm').addEventListener('submit', function(event) {
-      event.preventDefault();
-
-      const rating = document.getElementById('rating').value;
-      const comment = document.getElementById('comment').value;
-
-      const feedbackKey = 'feedback_' + workshopId;
-      const feedback = { rating: rating, comment: comment };
-      localStorage.setItem(feedbackKey, JSON.stringify(feedback));
-
-      alert('Feedback submitted! Thank you.');
-      window.location.href = 'dashboard.html';
-    });
-
-    function goBack() {
-      window.location.href = 'dashboard.html';
-    }
-
-    function logout() {
-      localStorage.clear();
-      window.location.href = 'login.html';
-    }
-  </script>
 </body>
 </html>
