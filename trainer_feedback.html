@@ -4,16 +4,8 @@
   <meta charset="UTF-8">
   <title>Trainer Feedback</title>
   <style>
-    body {
-      text-align: center;
-      font-family: Arial;
-      margin: 40px;
-    }
-    .nav-buttons {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
+    body { font-family: Arial; text-align: center; padding: 30px; background-color: #f5f5f5; }
+    .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
     .nav-buttons button {
       padding: 8px 14px;
       background-color: #2a9d8f;
@@ -22,41 +14,49 @@
       border-radius: 5px;
       cursor: pointer;
     }
-    .nav-buttons button:hover {
-      background-color: #21867a;
+    .nav-buttons button:hover { background-color: #21867a; }
+    .feedback-box {
+      border: 1px solid #ccc;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 450px;
+      background: #fff;
+      border-radius: 8px;
+      text-align: left;
     }
   </style>
 </head>
 <body>
-  <div class="nav-buttons">
-    <button onclick="goBack()">← Back</button>
-    <button onclick="logout()">Logout</button>
-  </div>
 
-  <h2>Workshop Feedback</h2>
-  <div id="comments"></div>
+<div class="nav-buttons">
+  <button onclick="window.location.href='trainer.html'">← Dashboard</button>
+  <button onclick="logout()">Logout</button>
+</div>
 
-  <script>
-    const data = JSON.parse(localStorage.getItem('feedback_w1'));
-    const div = document.getElementById('comments');
+<h2>Workshop Feedback</h2>
+<div id="feedbackDisplay"></div>
 
-    if (!data || !data.comment) {
-      div.innerHTML = "<p>No feedback submitted yet.</p>";
-    } else {
-      div.innerHTML = `
-        <p><strong>Rating:</strong> ${data.rating}/5</p>
-        <p><strong>Comment:</strong> "${data.comment}"</p>
-      `;
-    }
+<script>
+const currentWorkshopId = localStorage.getItem('currentWorkshop');
+const feedback = JSON.parse(localStorage.getItem('feedback_' + currentWorkshopId));
+const div = document.getElementById('feedbackDisplay');
 
-    function logout() {
-      localStorage.clear();
-      window.location.href = 'login.html';
-    }
+if (!feedback || !feedback.comment) {
+  div.innerHTML = "<p>No feedback submitted yet.</p>";
+} else {
+  div.innerHTML = `
+    <div class="feedback-box">
+      <p><strong>Rating:</strong> ${feedback.rating}/5</p>
+      <p><strong>Comment:</strong> "${feedback.comment}"</p>
+    </div>
+  `;
+}
 
-    function goBack() {
-      window.location.href = 'trainer.html';
-    }
-  </script>
+function logout() {
+  localStorage.clear();
+  window.location.href = 'login.html';
+}
+</script>
+
 </body>
 </html>
