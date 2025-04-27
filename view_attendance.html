@@ -15,18 +15,14 @@
       cursor: pointer;
     }
     .nav-buttons button:hover { background-color: #21867a; }
-    .attendance {
+    .attendance-box {
       border: 1px solid #ccc;
       padding: 20px;
       margin: 20px auto;
       max-width: 450px;
-      background: #fff;
+      background: #ffffff;
       border-radius: 8px;
       text-align: left;
-    }
-    label {
-      display: block;
-      margin: 10px 0;
     }
   </style>
 </head>
@@ -37,45 +33,49 @@
   <button onclick="logout()">Logout</button>
 </div>
 
-<h2>Attendance</h2>
-<div id="attendanceList"></div>
+<h2>Workshop Attendance</h2>
+
+<div id="attendanceList">
+  Loading attendance...
+</div>
 <button onclick="submitAttendance()">Submit Attendance</button>
 
 <script>
 const currentWorkshopId = localStorage.getItem('currentWorkshop');
 const workshops = JSON.parse(localStorage.getItem('workshops')) || [];
 const workshop = workshops.find(w => w.id === currentWorkshopId);
-const div = document.getElementById('attendanceList');
+const list = document.getElementById('attendanceList');
 
 if (!workshop || !workshop.participants || workshop.participants.length === 0) {
-  div.innerHTML = "<p>No participants registered.</p>";
+  list.innerHTML = "<p>No participants registered.</p>";
 } else {
+  list.innerHTML = '';
   workshop.participants.forEach(name => {
-    const box = document.createElement('div');
-    box.className = 'attendance';
-    box.innerHTML = `
-      <label>${name}
+    const div = document.createElement('div');
+    div.className = 'attendance-box';
+    div.innerHTML = `
+      <label>${name}:
         <input type="radio" name="${name}" value="Present" required> Present
         <input type="radio" name="${name}" value="Absent" required> Absent
       </label>
     `;
-    div.appendChild(box);
+    list.appendChild(div);
   });
 }
 
 function submitAttendance() {
-  const allRadios = document.querySelectorAll('input[type="radio"]:checked');
-  if (allRadios.length !== workshop.participants.length) {
-    alert("Please mark attendance for everyone.");
+  const radios = document.querySelectorAll('input[type="radio"]:checked');
+  if (radios.length !== workshop.participants.length) {
+    alert("Please mark attendance for all participants.");
     return;
   }
 
-  const attendanceResults = {};
-  allRadios.forEach(radio => {
-    attendanceResults[radio.name] = radio.value;
+  const attendance = {};
+  radios.forEach(radio => {
+    attendance[radio.name] = radio.value;
   });
 
-  localStorage.setItem('attendance_' + workshop.id, JSON.stringify(attendanceResults));
+  localStorage.setItem('attendance_' + workshop.id, JSON.stringify(attendance));
   alert("Attendance recorded!");
   window.location.href = 'trainer.html';
 }
