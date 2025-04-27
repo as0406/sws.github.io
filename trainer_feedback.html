@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Trainer Feedback</title>
+  <title>Workshop Feedback</title>
   <style>
-    body { font-family: Arial; text-align: center; padding: 30px; background-color: #f5f5f5; }
+    body { font-family: Arial; padding: 30px; text-align: center; background-color: #f5f5f5; }
     .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
     .nav-buttons button {
       padding: 8px 14px;
@@ -20,7 +20,7 @@
       padding: 20px;
       margin: 20px auto;
       max-width: 450px;
-      background: #fff;
+      background: #ffffff;
       border-radius: 8px;
       text-align: left;
     }
@@ -34,7 +34,8 @@
 </div>
 
 <h2>Workshop Feedback</h2>
-<div id="feedbackDisplay"></div>
+
+<div id="feedbackDisplay">Loading feedback...</div>
 
 <script>
 const currentWorkshopId = localStorage.getItem('currentWorkshop');
