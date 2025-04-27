@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <title>Trainer Dashboard</title>
   <style>
-    body { font-family: Arial; padding: 20px; text-align: center; }
-    .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
+    body { font-family: Arial; padding: 30px; text-align: center; }
+    .nav-buttons { display: flex; justify-content: flex-end; margin-bottom: 20px; }
     .nav-buttons button {
       padding: 8px 14px;
       background-color: #2a9d8f;
@@ -22,83 +22,59 @@
       max-width: 450px;
       border-radius: 8px;
       background: #f9f9f9;
-      text-align: left;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <div class="nav-buttons">
-    <button onclick="createWorkshop()">Create New Workshop</button>
-    <button onclick="logout()">Logout</button>
-  </div>
 
-  <h2>Trainer Dashboard</h2>
-  <div id="trainerWorkshops"></div>
+<div class="nav-buttons">
+  <button onclick="logout()">Logout</button>
+</div>
 
-  <script>
-    const user = JSON.parse(localStorage.getItem('user'));
-    const workshops = JSON.parse(localStorage.getItem('workshops')) || [];
-    const list = document.getElementById('trainerWorkshops');
+<h2>Trainer Dashboard</h2>
+<div id="trainerWorkshops"></div>
 
-    function loadTrainerWorkshops() {
-      list.innerHTML = '';
+<script>
+  const user = JSON.parse(localStorage.getItem('user'));
+  const workshops = JSON.parse(localStorage.getItem('workshops')) || [];
 
-      const myWorkshops = workshops.filter(w => w.trainer === user.name);
+  const myWorkshops = workshops.filter(w => w.trainer === user.name);
+  const div = document.getElementById('trainerWorkshops');
 
-      if (!myWorkshops.length) {
-        list.innerHTML = "<p>No workshops hosted yet.</p>";
-        return;
-      }
+  if (myWorkshops.length === 0) {
+    div.innerHTML = "<p>No workshops assigned yet.</p>";
+  } else {
+    myWorkshops.forEach(w => {
+      const box = document.createElement('div');
+      box.className = 'workshop';
+      box.innerHTML = `
+        <h3>${w.title}</h3>
+        <p><strong>Date:</strong> ${w.date}</p>
+        <p><strong>Time:</strong> ${w.time}</p>
+        <p><strong>Location:</strong> ${w.location}</p>
+        <button onclick="viewAttendance('${w.id}')">View Attendance</button>
+        <button onclick="viewFeedback('${w.id}')">View Feedback</button>
+      `;
+      div.appendChild(box);
+    });
+  }
 
-      myWorkshops.forEach(w => {
-        const div = document.createElement('div');
-        div.className = 'workshop';
-        div.innerHTML = `
-          <strong>${w.title}</strong><br>
-          Date: ${w.date} | Time: ${w.time}<br>
-          Location: ${w.location}<br>
-          Price: ${w.price}<br>
-          Status: ${w.status}<br><br>
-          <button onclick="viewAttendance('${w.id}')">View Attendance</button>
-          <button onclick="viewFeedback('${w.id}')">View Feedback</button>
-          <button onclick="cancelWorkshop('${w.id}')">Cancel Workshop</button>
-        `;
-        list.appendChild(div);
-      });
-    }
+  function viewAttendance(workshopId) {
+    localStorage.setItem('currentWorkshop', workshopId);
+    window.location.href = 'view_attendance.html';
+  }
 
-    function viewAttendance(id) {
-      localStorage.setItem('attendanceWorkshopId', id);
-      window.location.href = 'view_attendance.html';
-    }
+  function viewFeedback(workshopId) {
+    localStorage.setItem('currentWorkshop', workshopId);
+    window.location.href = 'trainer_feedback.html';
+  }
 
-    function viewFeedback(id) {
-      localStorage.setItem('feedbackWorkshopId', id);
-      window.location.href = 'trainer_feedback.html';
-    }
+  function logout() {
+    localStorage.clear();
+    window.location.href = 'login.html';
+  }
+</script>
 
-    function cancelWorkshop(id) {
-      if (!confirm('Are you sure you want to cancel this workshop?')) return;
-
-      const index = workshops.findIndex(w => w.id === id);
-      if (index !== -1) {
-        workshops.splice(index, 1);
-        localStorage.setItem('workshops', JSON.stringify(workshops));
-        alert('Workshop canceled.');
-        loadTrainerWorkshops();
-      }
-    }
-
-    function createWorkshop() {
-      window.location.href = 'create_workshop.html';
-    }
-
-    function logout() {
-      localStorage.clear();
-      window.location.href = 'login.html';
-    }
-
-    loadTrainerWorkshops();
-  </script>
 </body>
 </html>
