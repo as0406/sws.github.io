@@ -15,109 +15,117 @@
       cursor: pointer;
     }
     .nav-buttons button:hover { background-color: #21867a; }
-    .workshop { border: 1px solid #ccc; padding: 15px; margin: 20px auto; max-width: 450px; border-radius: 8px; background: #f9f9f9; text-align: left; }
+    .workshop {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin: 20px auto;
+      max-width: 450px;
+      border-radius: 8px;
+      background: #f9f9f9;
+      text-align: left;
+    }
   </style>
 </head>
 <body>
-  <div class="nav-buttons">
-    <button onclick="browseWorkshops()">Browse Workshops</button>
-    <button onclick="logout()">Logout</button>
-  </div>
 
-  <h2>My Registered Workshops</h2>
-  <div id="registeredWorkshops"></div>
+<div class="nav-buttons">
+  <button onclick="browseWorkshops()">Browse Workshops</button>
+  <button onclick="logout()">Logout</button>
+</div>
 
-  <script>
-    let user = JSON.parse(localStorage.getItem('user'));
-    let allWorkshops = JSON.parse(localStorage.getItem('workshops')) || [];
-    const list = document.getElementById('registeredWorkshops');
+<h2>My Registered Workshops</h2>
+<div id="registeredWorkshops"></div>
 
-    if (!user.attendedWorkshops) {
-      user.attendedWorkshops = [];
+<script src="workshops.js"></script>
+<script>
+  let user = JSON.parse(localStorage.getItem('user'));
+  let allWorkshops = JSON.parse(localStorage.getItem('workshops')) || [];
+  const list = document.getElementById('registeredWorkshops');
+
+  if (!user.attendedWorkshops) {
+    user.attendedWorkshops = [];
+  }
+
+  function displayRegistered() {
+    list.innerHTML = '';
+    if (!user.registeredWorkshops.length) {
+      list.innerHTML = "<p>No workshops registered yet.</p>";
+      return;
     }
 
-    function displayRegistered() {
-      list.innerHTML = '';
-      if (!user.registeredWorkshops.length) {
-        list.innerHTML = "<p>No workshops registered.</p>";
-        return;
+    user.registeredWorkshops.forEach(id => {
+      const w = allWorkshops.find(w => w.id === id);
+      if (w) {
+        const div = document.createElement('div');
+        div.className = 'workshop';
+        div.innerHTML = `
+          <strong>${w.title}</strong><br>
+          Date: ${w.date} | Time: ${w.time}<br>
+          Location: ${w.location}<br>
+          Price: ${w.price}<br><br>
+          ${user.attendedWorkshops.includes(id) ? 
+            `<button onclick="giveFeedback('${id}')">Submit Feedback</button>` :
+            `<button onclick="markAttended('${id}')">Mark as Attended</button>`
+          }
+          <button onclick="cancelRegistration('${id}')">Cancel Registration</button>
+        `;
+        list.appendChild(div);
+      }
+    });
+  }
+
+  function markAttended(id) {
+    if (!confirm('Confirm you have attended this workshop?')) return;
+    user.attendedWorkshops.push(id);
+    localStorage.setItem('user', JSON.stringify(user));
+    alert('Attendance marked. You can now submit feedback.');
+    displayRegistered();
+  }
+
+  function cancelRegistration(id) {
+    if (!confirm('Are you sure you want to cancel?')) return;
+    
+    const index = user.registeredWorkshops.indexOf(id);
+    if (index > -1) {
+      user.registeredWorkshops.splice(index, 1);
+      const attendIndex = user.attendedWorkshops.indexOf(id);
+      if (attendIndex > -1) {
+        user.attendedWorkshops.splice(attendIndex, 1);
       }
 
-      user.registeredWorkshops.forEach(id => {
-        const w = allWorkshops.find(w => w.id === id);
-        if (w) {
-          const div = document.createElement('div');
-          div.className = 'workshop';
-          div.innerHTML = `
-            <strong>${w.title}</strong><br>
-            Date: ${w.date} | Time: ${w.time}<br>
-            Location: ${w.location}<br>
-            Price: ${w.price}<br>
-            Status: ${w.status}<br><br>
-            ${user.attendedWorkshops.includes(id) ? 
-              `<button onclick="giveFeedback('${id}')">Submit Feedback</button>` :
-              `<button onclick="markAttended('${id}')">Mark as Attended</button>`
-            }
-            <button onclick="cancelRegistration('${id}')">Cancel Registration</button>
-          `;
-          list.appendChild(div);
-        }
-      });
-    }
-
-    function markAttended(id) {
-      if (!confirm('Confirm you have attended this workshop?')) return;
-      user.attendedWorkshops.push(id);
       localStorage.setItem('user', JSON.stringify(user));
-      alert('Attendance marked. You can now leave feedback.');
+
+      const workshops = JSON.parse(localStorage.getItem('workshops'));
+      const workshop = workshops.find(w => w.id === id);
+      if (workshop && workshop.capacity !== undefined) {
+        workshop.capacity++;
+        if (workshop.status === "Full" && workshop.capacity > 0) {
+          workshop.status = "Open";
+        }
+        localStorage.setItem('workshops', JSON.stringify(workshops));
+      }
+
+      alert('Registration cancelled.');
       displayRegistered();
     }
+  }
 
-    function cancelRegistration(id) {
-      if (!confirm('Are you sure you want to cancel your registration?')) return;
+  function giveFeedback(id) {
+    localStorage.setItem('feedbackWorkshopId', id);
+    window.location.href = 'feedback.html';
+  }
 
-      const index = user.registeredWorkshops.indexOf(id);
-      if (index > -1) {
-        user.registeredWorkshops.splice(index, 1);
+  function browseWorkshops() {
+    window.location.href = 'workshops.html';
+  }
 
-        // Also remove from attended if already marked
-        const attendIndex = user.attendedWorkshops.indexOf(id);
-        if (attendIndex > -1) {
-          user.attendedWorkshops.splice(attendIndex, 1);
-        }
+  function logout() {
+    localStorage.clear();
+    window.location.href = 'login.html';
+  }
 
-        localStorage.setItem('user', JSON.stringify(user));
+  displayRegistered();
+</script>
 
-        const workshops = JSON.parse(localStorage.getItem('workshops'));
-        const workshop = workshops.find(w => w.id === id);
-        if (workshop && workshop.capacity !== undefined) {
-          workshop.capacity++;
-          if (workshop.status === "Full" && workshop.capacity > 0) {
-            workshop.status = "Open";
-          }
-          localStorage.setItem('workshops', JSON.stringify(workshops));
-        }
-
-        alert('Registration cancelled.');
-        displayRegistered();
-      }
-    }
-
-    function giveFeedback(id) {
-      localStorage.setItem('feedbackWorkshopId', id);
-      window.location.href = 'feedback.html';
-    }
-
-    function browseWorkshops() {
-      window.location.href = 'workshops.html';
-    }
-
-    function logout() {
-      localStorage.clear();
-      window.location.href = 'login.html';
-    }
-
-    displayRegistered();
-  </script>
 </body>
 </html>
