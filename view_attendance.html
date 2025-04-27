@@ -1,64 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><title>Attendance</title>
-<style>
-  body { text-align: center; font-family: Arial; margin-top: 40px; }
-  .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
-  .nav-buttons button {
-    padding: 8px 14px;
-    background-color: #2a9d8f;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  .nav-buttons button:hover { background-color: #21867a; }
-  select { margin: 10px; padding: 8px; }
-  .entry { margin: 10px; }
-</style>
+<head>
+  <meta charset="UTF-8">
+  <title>View Attendance</title>
+  <style>
+    body { font-family: Arial; padding: 30px; text-align: center; background-color: #f5f5f5; }
+    .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
+    .nav-buttons button {
+      padding: 8px 14px;
+      background-color: #2a9d8f;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .nav-buttons button:hover { background-color: #21867a; }
+    .attendance {
+      border: 1px solid #ccc;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 450px;
+      background: #fff;
+      border-radius: 8px;
+      text-align: left;
+    }
+    label {
+      display: block;
+      margin: 10px 0;
+    }
+  </style>
 </head>
 <body>
-  <div class="nav-buttons">
-    <button onclick="window.location.href='trainer.html'">← Back</button>
-    <button onclick="logout()">Logout</button>
-  </div>
-  <h2>Attendance</h2>
-  <div id="students"></div>
-  <button onclick="save()">Save Attendance</button>
 
-  <script>
-    const participants = [ "John Smith", "Emily Davis", "Ryan Chen", "Mia Patel" ];
-    const workshopId = localStorage.getItem('activeWorkshopId');
-    const div = document.getElementById('students');
+<div class="nav-buttons">
+  <button onclick="window.location.href='trainer.html'">← Dashboard</button>
+  <button onclick="logout()">Logout</button>
+</div>
 
-    participants.forEach(name => {
-      const entry = document.createElement('div');
-      entry.className = 'entry';
-      entry.innerHTML = `
-        <label>${name}: 
-          <select id="status-${name}">
-            <option value="Present">Present</option>
-            <option value="Absent">Absent</option>
-          </select>
-        </label>
-      `;
-      div.appendChild(entry);
-    });
+<h2>Attendance</h2>
+<div id="attendanceList"></div>
+<button onclick="submitAttendance()">Submit Attendance</button>
 
-    function save() {
-      const result = {};
-      participants.forEach(name => {
-        const status = document.getElementById(`status-${name}`).value;
-        result[name] = status;
-      });
-      localStorage.setItem(`attendance_${workshopId}`, JSON.stringify(result));
-      alert("Attendance saved successfully!");
-    }
+<script>
+const currentWorkshopId = localStorage.getItem('currentWorkshop');
+const workshops = JSON.parse(localStorage.getItem('workshops')) || [];
+const workshop = workshops.find(w => w.id === currentWorkshopId);
+const div = document.getElementById('attendanceList');
 
-    function logout() {
-      localStorage.clear();
-      window.location.href = 'login.html';
-    }
-  </script>
+if (!workshop || !workshop.participants || workshop.participants.length === 0) {
+  div.innerHTML = "<p>No participants registered.</p>";
+} else {
+  workshop.participants.forEach(name => {
+    const box = document.createElement('div');
+    box.className = 'attendance';
+    box.innerHTML = `
+      <label>${name}
+        <input type="radio" name="${name}" value="Present" required> Present
+        <input type="radio" name="${name}" value="Absent" required> Absent
+      </label>
+    `;
+    div.appendChild(box);
+  });
+}
+
+function submitAttendance() {
+  const allRadios = document.querySelectorAll('input[type="radio"]:checked');
+  if (allRadios.length !== workshop.participants.length) {
+    alert("Please mark attendance for everyone.");
+    return;
+  }
+
+  const attendanceResults = {};
+  allRadios.forEach(radio => {
+    attendanceResults[radio.name] = radio.value;
+  });
+
+  localStorage.setItem('attendance_' + workshop.id, JSON.stringify(attendanceResults));
+  alert("Attendance recorded!");
+  window.location.href = 'trainer.html';
+}
+
+function logout() {
+  localStorage.clear();
+  window.location.href = 'login.html';
+}
+</script>
+
 </body>
 </html>
