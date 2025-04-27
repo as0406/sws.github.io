@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>View Attendance</title>
+  <title>Workshop Feedback</title>
   <style>
     body { font-family: Arial; padding: 30px; text-align: center; background-color: #f5f5f5; }
     .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
@@ -15,7 +15,7 @@
       cursor: pointer;
     }
     .nav-buttons button:hover { background-color: #21867a; }
-    .attendance-box {
+    .feedback-box {
       border: 1px solid #ccc;
       padding: 20px;
       margin: 20px auto;
@@ -33,51 +33,24 @@
   <button onclick="logout()">Logout</button>
 </div>
 
-<h2>Workshop Attendance</h2>
+<h2>Workshop Feedback</h2>
 
-<div id="attendanceList">
-  Loading attendance...
-</div>
-<button onclick="submitAttendance()">Submit Attendance</button>
+<div id="feedbackDisplay">Loading feedback...</div>
 
 <script>
 const currentWorkshopId = localStorage.getItem('currentWorkshop');
-const workshops = JSON.parse(localStorage.getItem('workshops')) || [];
-const workshop = workshops.find(w => w.id === currentWorkshopId);
-const list = document.getElementById('attendanceList');
+const feedback = JSON.parse(localStorage.getItem('feedback_' + currentWorkshopId));
+const div = document.getElementById('feedbackDisplay');
 
-if (!workshop || !workshop.participants || workshop.participants.length === 0) {
-  list.innerHTML = "<p>No participants registered.</p>";
+if (!feedback || !feedback.comment) {
+  div.innerHTML = "<p>No feedback submitted yet.</p>";
 } else {
-  list.innerHTML = '';
-  workshop.participants.forEach(name => {
-    const div = document.createElement('div');
-    div.className = 'attendance-box';
-    div.innerHTML = `
-      <label>${name}:
-        <input type="radio" name="${name}" value="Present" required> Present
-        <input type="radio" name="${name}" value="Absent" required> Absent
-      </label>
-    `;
-    list.appendChild(div);
-  });
-}
-
-function submitAttendance() {
-  const radios = document.querySelectorAll('input[type="radio"]:checked');
-  if (radios.length !== workshop.participants.length) {
-    alert("Please mark attendance for all participants.");
-    return;
-  }
-
-  const attendance = {};
-  radios.forEach(radio => {
-    attendance[radio.name] = radio.value;
-  });
-
-  localStorage.setItem('attendance_' + workshop.id, JSON.stringify(attendance));
-  alert("Attendance recorded!");
-  window.location.href = 'trainer.html';
+  div.innerHTML = `
+    <div class="feedback-box">
+      <p><strong>Rating:</strong> ${feedback.rating}/5</p>
+      <p><strong>Comment:</strong> "${feedback.comment}"</p>
+    </div>
+  `;
 }
 
 function logout() {
