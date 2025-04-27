@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Registration Confirmation</title>
   <style>
-    body { font-family: Arial; text-align: center; padding: 30px; background-color: #f5f5f5; }
+    body { font-family: Arial; padding: 30px; text-align: center; background-color: #f5f5f5; }
     .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
     .nav-buttons button {
       padding: 8px 14px;
@@ -20,49 +20,53 @@
       padding: 20px;
       margin: 20px auto;
       max-width: 450px;
-      background: #fff;
       border-radius: 8px;
+      background: #ffffff;
+      text-align: center;
     }
   </style>
 </head>
 <body>
 
 <div class="nav-buttons">
-  <button onclick="goDashboard()">← Dashboard</button>
+  <button onclick="window.location.href='dashboard.html'">← Dashboard</button>
   <button onclick="logout()">Logout</button>
 </div>
 
 <h2>Registration Confirmed!</h2>
 
-<div id="confirmationDetails" class="confirmation-box">
+<div class="confirmation-box" id="confirmationBox">
   Loading registration details...
 </div>
 
 <script>
-const confirmationBox = document.getElementById('confirmationDetails');
-const lastWorkshop = JSON.parse(localStorage.getItem('lastRegisteredWorkshop'));
+  const workshops = JSON.parse(localStorage.getItem('workshops')) || [];
+  const selectedWorkshopId = localStorage.getItem('selectedWorkshop');
 
-if (lastWorkshop) {
-  confirmationBox.innerHTML = `
-    <h3>${lastWorkshop.title}</h3>
-    <p><strong>Date:</strong> ${lastWorkshop.date}</p>
-    <p><strong>Time:</strong> ${lastWorkshop.time}</p>
-    <p><strong>Location:</strong> ${lastWorkshop.location}</p>
-    <p><strong>Trainer:</strong> ${lastWorkshop.trainer}</p>
-    <p><strong>Price:</strong> ${lastWorkshop.price}</p>
-  `;
-} else {
-  confirmationBox.innerHTML = "<p>No registration data available.</p>";
-}
+  const confirmationDiv = document.getElementById('confirmationBox');
 
-function goDashboard() {
-  window.location.href = 'dashboard.html';
-}
+  if (!selectedWorkshopId || workshops.length === 0) {
+    confirmationDiv.innerHTML = "<p>No registration data available.</p>";
+  } else {
+    const workshop = workshops.find(w => w.id === selectedWorkshopId);
+    if (workshop) {
+      confirmationDiv.innerHTML = `
+        <h3>${workshop.title}</h3>
+        <p><strong>Date:</strong> ${workshop.date}</p>
+        <p><strong>Time:</strong> ${workshop.time}</p>
+        <p><strong>Location:</strong> ${workshop.location}</p>
+        <p><strong>Trainer:</strong> ${workshop.trainer}</p>
+        <p><strong>Price:</strong> ${workshop.price}</p>
+      `;
+    } else {
+      confirmationDiv.innerHTML = "<p>No registration data available.</p>";
+    }
+  }
 
-function logout() {
-  localStorage.clear();
-  window.location.href = 'login.html';
-}
+  function logout() {
+    localStorage.clear();
+    window.location.href = 'login.html';
+  }
 </script>
 
 </body>
