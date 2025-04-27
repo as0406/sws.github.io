@@ -1,9 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Registration Confirmation</title>
+  <style>
+    body { font-family: Arial; padding: 30px; text-align: center; background-color: #f5f5f5; }
+    .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
+    .nav-buttons button {
+      padding: 8px 14px;
+      background-color: #2a9d8f;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .nav-buttons button:hover { background-color: #21867a; }
+    .confirmation-box {
+      border: 1px solid #ccc;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 450px;
+      background: #ffffff;
+      border-radius: 8px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<div class="nav-buttons">
+  <button onclick="goDashboard()">← Dashboard</button>
+  <button onclick="logout()">Logout</button>
+</div>
+
+<h2>Registration Confirmed!</h2>
+
+<div id="confirmationDetails" class="confirmation-box">
+  Loading registration details...
+</div>
+
 <script>
 const workshop = JSON.parse(localStorage.getItem('lastRegisteredWorkshop'));
-const div = document.getElementById('registrationDetails');
+const div = document.getElementById('confirmationDetails');
 
 if (!workshop) {
-  div.innerHTML = "<p>No registration data available.</p>";
+  div.innerHTML = "<p>No registration data found.</p>";
 } else {
   div.innerHTML = `
     <h3>${workshop.title}</h3>
@@ -11,6 +52,19 @@ if (!workshop) {
     <p><strong>Time:</strong> ${workshop.time}</p>
     <p><strong>Location:</strong> ${workshop.location}</p>
     <p><strong>Trainer:</strong> ${workshop.trainer}</p>
+    <p><strong>Price:</strong> ${workshop.price}</p>
   `;
 }
+
+function goDashboard() {
+  window.location.href = 'dashboard.html';
+}
+
+function logout() {
+  localStorage.clear();
+  window.location.href = 'login.html';
+}
 </script>
+
+</body>
+</html>
