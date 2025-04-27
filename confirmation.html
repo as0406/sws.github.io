@@ -15,12 +15,12 @@
       cursor: pointer;
     }
     .nav-buttons button:hover { background-color: #21867a; }
-    .confirmation-box {
-      border: 1px solid #ccc;
+    .confirmation {
+      background: #fff;
       padding: 20px;
       margin: 20px auto;
-      max-width: 450px;
-      background: #ffffff;
+      max-width: 400px;
+      border: 1px solid #ccc;
       border-radius: 8px;
       text-align: center;
     }
@@ -29,41 +29,45 @@
 <body>
 
 <div class="nav-buttons">
-  <button onclick="goDashboard()">← Dashboard</button>
+  <button onclick="window.location.href='dashboard.html'">← Dashboard</button>
   <button onclick="logout()">Logout</button>
 </div>
 
 <h2>Registration Confirmed!</h2>
-
-<div id="confirmationDetails" class="confirmation-box">
-  Loading registration details...
+<div class="confirmation" id="confirmationBox">
+  <p>Loading registration details...</p>
 </div>
 
 <script>
-const workshop = JSON.parse(localStorage.getItem('lastRegisteredWorkshop'));
-const div = document.getElementById('confirmationDetails');
+  const user = JSON.parse(localStorage.getItem('user'));
+  const workshops = JSON.parse(localStorage.getItem('workshops'));
 
-if (!workshop) {
-  div.innerHTML = "<p>No registration data found.</p>";
-} else {
-  div.innerHTML = `
-    <h3>${workshop.title}</h3>
-    <p><strong>Date:</strong> ${workshop.date}</p>
-    <p><strong>Time:</strong> ${workshop.time}</p>
-    <p><strong>Location:</strong> ${workshop.location}</p>
-    <p><strong>Trainer:</strong> ${workshop.trainer}</p>
-    <p><strong>Price:</strong> ${workshop.price}</p>
-  `;
-}
+  const confirmationDiv = document.getElementById('confirmationBox');
 
-function goDashboard() {
-  window.location.href = 'dashboard.html';
-}
+  if (!user || !workshops) {
+    confirmationDiv.innerHTML = "<p>Registration information not found.</p>";
+  } else {
+    const latestWorkshopId = user.registeredWorkshops[user.registeredWorkshops.length - 1];
+    const registeredWorkshop = workshops.find(w => w.id === latestWorkshopId);
 
-function logout() {
-  localStorage.clear();
-  window.location.href = 'login.html';
-}
+    if (registeredWorkshop) {
+      confirmationDiv.innerHTML = `
+        <h3>${registeredWorkshop.title}</h3>
+        <p><strong>Date:</strong> ${registeredWorkshop.date}</p>
+        <p><strong>Time:</strong> ${registeredWorkshop.time}</p>
+        <p><strong>Location:</strong> ${registeredWorkshop.location}</p>
+        <p><strong>Trainer:</strong> ${registeredWorkshop.trainer}</p>
+        <p><strong>Price:</strong> ${registeredWorkshop.price}</p>
+      `;
+    } else {
+      confirmationDiv.innerHTML = "<p>No registration data available.</p>";
+    }
+  }
+
+  function logout() {
+    localStorage.clear();
+    window.location.href = 'login.html';
+  }
 </script>
 
 </body>
