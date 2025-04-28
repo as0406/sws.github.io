@@ -4,40 +4,66 @@
   <meta charset="UTF-8">
   <title>Login</title>
   <style>
-    body { text-align: center; font-family: Arial; padding-top: 100px; background-color: #f5f5f5; }
-    input, button { padding: 10px; margin: 5px; }
-    button { background-color: #2a9d8f; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    body { text-align: center; font-family: Arial, sans-serif; background-color: #f5f5f5; padding: 50px; }
+    h1 { margin-bottom: 20px; }
+    input[type="email"], input[type="password"] {
+      padding: 10px;
+      width: 250px;
+      margin: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #2a9d8f;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
     button:hover { background-color: #21867a; }
   </style>
 </head>
 <body>
-  <h2>Login to Stay Well Studio</h2>
-  <input id="email" type="email" placeholder="Email"><br>
-  <input id="password" type="password" placeholder="Password"><br>
-  <button onclick="login()">Login</button>
 
-  <script>
-    const users = [
-      { email: "john@example.com", password: "test123", name: "John Doe", role: "customer", registeredWorkshops: [], attendedWorkshops: [] },
-      { email: "sarah@example.com", password: "trainer1", name: "Sarah Johnson", role: "trainer" }
-    ];
+<h1>Login</h1>
 
-    function login() {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const user = users.find(u => u.email === email && u.password === password);
+<form id="loginForm">
+  <input type="email" id="email" placeholder="Email" required><br>
+  <input type="password" id="password" placeholder="Password" required><br>
+  <button type="submit">Login</button>
+</form>
 
-      if (user) {
-        localStorage.setItem('user', JSON.stringify(user));
-        if (user.role === "trainer") {
-          window.location.href = 'trainer.html';
-        } else {
-          window.location.href = 'dashboard.html';
-        }
-      } else {
-        alert("Invalid credentials!");
-      }
+<script>
+// Sample users
+const users = [
+  { email: "john@example.com", password: "test123", name: "John Doe", role: "customer", registeredWorkshops: [], attendedWorkshops: [] },
+  { email: "sarah@example.com", password: "trainer1", name: "Sarah Johnson", role: "trainer" },
+  { email: "mike@example.com", password: "trainer2", name: "Mike Lee", role: "trainer" }
+];
+
+document.getElementById('loginForm').addEventListener('submit', function(event) {
+  event.preventDefault();
+
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value.trim();
+
+  const user = users.find(u => u.email === email && u.password === password);
+
+  if (user) {
+    localStorage.setItem('user', JSON.stringify(user));
+    if (user.role === 'customer') {
+      window.location.href = 'dashboard.html';
+    } else if (user.role === 'trainer') {
+      window.location.href = 'trainer.html';
     }
-  </script>
+  } else {
+    alert('Invalid email or password.');
+  }
+});
+</script>
+
 </body>
 </html>
