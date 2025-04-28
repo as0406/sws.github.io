@@ -1,121 +1,102 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Available Workshops</title>
-  <style>
-    body { font-family: Arial; padding: 30px; text-align: center; background-color: #f5f5f5; }
-    .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
-    .nav-buttons button {
-      padding: 8px 14px;
-      background-color: #2a9d8f;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .nav-buttons button:hover { background-color: #21867a; }
-    .workshop {
-      border: 1px solid #ccc;
-      padding: 15px;
-      margin: 20px auto;
-      max-width: 450px;
-      border-radius: 8px;
-      background: #ffffff;
-      text-align: left;
-    }
-    button.register-btn {
-      margin-top: 15px;
-      padding: 8px 16px;
-      background-color: #264653;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    button.register-btn:hover { background-color: #1b333f; }
-  </style>
-</head>
-<body>
-
-<div class="nav-buttons">
-  <button onclick="window.location.href='dashboard.html'">← Dashboard</button>
-  <button onclick="logout()">Logout</button>
-</div>
-
-<h2>Select a Workshop to Register</h2>
-
-<form id="workshopForm"></form>
-<button class="register-btn" onclick="submitSelection()">Register</button>
-
-<script>
-// MANUAL SEEDING workshops if missing
-let workshops = JSON.parse(localStorage.getItem('workshops'));
-
-if (!workshops) {
-  workshops = [
-    { id: 'w1', title: 'Yoga Basics', date: 'April 25', time: '10:00 AM', location: 'Studio A', price: '$10', trainer: 'Sarah Johnson', trainerEmail: 'sarah@example.com', capacity: 10, status: 'Open', participants: [] },
-    { id: 'w2', title: 'HIIT Bootcamp', date: 'April 26', time: '12:00 PM', location: 'Gym Hall', price: '$15', trainer: 'Mike Lee', trainerEmail: 'mike@example.com', capacity: 8, status: 'Open', participants: [] },
-    { id: 'w3', title: 'Pilates Flow', date: 'April 27', time: '9:00 AM', location: 'Studio B', price: '$12', trainer: 'Sarah Johnson', trainerEmail: 'sarah@example.com', capacity: 12, status: 'Open', participants: [] },
-    { id: 'w4', title: 'Zumba Energy', date: 'April 28', time: '6:00 PM', location: 'Main Hall', price: '$10', trainer: 'Linda White', trainerEmail: 'linda@example.com', capacity: 15, status: 'Open', participants: [] },
-    { id: 'w5', title: 'Stretch & Strength', date: 'April 29', time: '2:00 PM', location: 'Gym Studio', price: '$14', trainer: 'Sarah Johnson', trainerEmail: 'sarah@example.com', capacity: 10, status: 'Open', participants: [] },
-    { id: 'w6', title: 'Relaxation Techniques', date: 'April 30', time: '11:00 AM', location: 'Zen Room', price: '$8', trainer: 'Mike Lee', trainerEmail: 'mike@example.com', capacity: 8, status: 'Open', participants: [] }
-  ];
-  localStorage.setItem('workshops', JSON.stringify(workshops));
-}
-
-const user = JSON.parse(localStorage.getItem('user'));
-const form = document.getElementById('workshopForm');
-
-workshops.filter(w => w.status === 'Open' && w.capacity > 0).forEach(w => {
-  const div = document.createElement('div');
-  div.className = 'workshop';
-  div.innerHTML = `
-    <label>
-      <input type="radio" name="selectedWorkshop" value="${w.id}">
-      <strong>${w.title}</strong><br>
-      Date: ${w.date} | Time: ${w.time}<br>
-      Location: ${w.location}<br>
-      Price: ${w.price}<br>
-      Trainer: ${w.trainer}<br>
-      <small>Available Seats: ${w.capacity}</small>
-    </label>
-  `;
-  form.appendChild(div);
-});
-
-function submitSelection() {
-  const selected = document.querySelector('input[name="selectedWorkshop"]:checked');
-  if (!selected) {
-    alert('Please select a workshop before registering.');
-    return;
-  }
-
-  const workshopId = selected.value;
-  const workshopIndex = workshops.findIndex(w => w.id === workshopId);
-
-  if (workshopIndex !== -1) {
-    if (!workshops[workshopIndex].participants.includes(user.name)) {
-      workshops[workshopIndex].participants.push(user.name);
-      workshops[workshopIndex].capacity -= 1;
-    }
-  }
-
-  if (!user.registeredWorkshops.includes(workshopId)) {
-    user.registeredWorkshops.push(workshopId);
-  }
-
-  localStorage.setItem('user', JSON.stringify(user));
-  localStorage.setItem('workshops', JSON.stringify(workshops));
-
-  window.location.href = 'confirmation.html';
-}
-
-function logout() {
-  localStorage.clear();
-  window.location.href = 'login.html';
-}
-</script>
-
-</body>
-</html>
+ <html lang="en">
+ <head>
+   <meta charset="UTF-8">
+   <title>Customer Dashboard</title>
+   <style>
+     body { font-family: Arial; padding: 30px; text-align: center; background-color: #f5f5f5; }
+     .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
+     .nav-buttons button {
+       padding: 8px 14px;
+       background-color: #2a9d8f;
+       color: white;
+       border: none;
+       border-radius: 5px;
+       cursor: pointer;
+     }
+     .nav-buttons button:hover { background-color: #21867a; }
+     .registered-workshop {
+       border: 1px solid #ccc;
+       padding: 20px;
+       margin: 20px auto;
+       max-width: 450px;
+       border-radius: 8px;
+       background: #ffffff;
+       text-align: left;
+     }
+   </style>
+ </head>
+ <body>
+   <script src="workshops-data.js"></script>
+ 
+ <div class="nav-buttons">
+   <button onclick="window.location.href='workshops.html'">Available Workshops</button>
+   <button onclick="logout()">Logout</button>
+ </div>
+ 
+ <h2>Registered Workshops</h2>
+ 
+ <div id="dashboardWorkshops">
+   Loading...
+ </div>
+ 
+ <script>
+ const user = JSON.parse(localStorage.getItem('user'));
+ const workshops = JSON.parse(localStorage.getItem('workshops')) || [];
+ 
+ const container = document.getElementById('dashboardWorkshops');
+ 
+ if (!user || !user.registeredWorkshops || user.registeredWorkshops.length === 0) {
+   container.innerHTML = "<p>You have not registered for any workshops yet.</p>";
+ } else {
+   user.registeredWorkshops.forEach(id => {
+     const workshop = workshops.find(w => w.id === id);
+     if (workshop) {
+       const div = document.createElement('div');
+       div.className = 'registered-workshop';
+       div.innerHTML = `
+         <h3>${workshop.title}</h3>
+         <p><strong>Date:</strong> ${workshop.date}</p>
+         <p><strong>Time:</strong> ${workshop.time}</p>
+         <p><strong>Location:</strong> ${workshop.location}</p>
+         <p><strong>Trainer:</strong> ${workshop.trainer}</p>
+         <button onclick="markAsAttended('${workshop.id}')">Mark as Attended</button>
+         <button onclick="cancelWorkshop('${workshop.id}')">Cancel Registration</button>
+       `;
+       container.appendChild(div);
+     }
+   });
+ }
+ 
+ function markAsAttended(id) {
+   localStorage.setItem('attendedWorkshop', id);
+   window.location.href = 'feedback.html';
+ }
+ 
+ function cancelWorkshop(id) {
+   if (confirm('Are you sure you want to cancel registration?')) {
+     const user = JSON.parse(localStorage.getItem('user'));
+     const workshops = JSON.parse(localStorage.getItem('workshops'));
+ 
+     user.registeredWorkshops = user.registeredWorkshops.filter(wid => wid !== id);
+     const workshop = workshops.find(w => w.id === id);
+ 
+     if (workshop) {
+       workshop.capacity++;
+       workshop.participants = (workshop.participants || []).filter(name => name !== user.name);
+       localStorage.setItem('workshops', JSON.stringify(workshops));
+     }
+ 
+     localStorage.setItem('user', JSON.stringify(user));
+     window.location.reload();
+   }
+ }
+ 
+ function logout() {
+   localStorage.clear();
+   window.location.href = 'login.html';
+ }
+ </script>
+ 
+ </body>
+ </html>
