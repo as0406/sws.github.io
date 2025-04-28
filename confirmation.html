@@ -27,7 +27,6 @@
   </style>
 </head>
 <body>
-  <script src="workshops-data.js"></script>
 
 <div class="nav-buttons">
   <button onclick="window.location.href='dashboard.html'">← Dashboard</button>
@@ -35,40 +34,41 @@
 </div>
 
 <h2>Registration Confirmed!</h2>
+
 <div class="confirmation" id="confirmationBox">
   <p>Loading registration details...</p>
 </div>
 
 <script>
-  const user = JSON.parse(localStorage.getItem('user'));
-  const workshops = JSON.parse(localStorage.getItem('workshops'));
+const user = JSON.parse(localStorage.getItem('user'));
+const workshops = JSON.parse(localStorage.getItem('workshops'));
 
-  const confirmationDiv = document.getElementById('confirmationBox');
+const confirmationDiv = document.getElementById('confirmationBox');
 
-  if (!user || !workshops) {
-    confirmationDiv.innerHTML = "<p>Registration information not found.</p>";
+if (!user || !workshops || !user.registeredWorkshops.length) {
+  confirmationDiv.innerHTML = "<p>Registration information not found.</p>";
+} else {
+  const latestWorkshopId = user.registeredWorkshops[user.registeredWorkshops.length - 1];
+  const registeredWorkshop = workshops.find(w => w.id === latestWorkshopId);
+
+  if (registeredWorkshop) {
+    confirmationDiv.innerHTML = `
+      <h3>${registeredWorkshop.title}</h3>
+      <p><strong>Date:</strong> ${registeredWorkshop.date}</p>
+      <p><strong>Time:</strong> ${registeredWorkshop.time}</p>
+      <p><strong>Location:</strong> ${registeredWorkshop.location}</p>
+      <p><strong>Trainer:</strong> ${registeredWorkshop.trainer}</p>
+      <p><strong>Price:</strong> ${registeredWorkshop.price}</p>
+    `;
   } else {
-    const latestWorkshopId = user.registeredWorkshops[user.registeredWorkshops.length - 1];
-    const registeredWorkshop = workshops.find(w => w.id === latestWorkshopId);
-
-    if (registeredWorkshop) {
-      confirmationDiv.innerHTML = `
-        <h3>${registeredWorkshop.title}</h3>
-        <p><strong>Date:</strong> ${registeredWorkshop.date}</p>
-        <p><strong>Time:</strong> ${registeredWorkshop.time}</p>
-        <p><strong>Location:</strong> ${registeredWorkshop.location}</p>
-        <p><strong>Trainer:</strong> ${registeredWorkshop.trainer}</p>
-        <p><strong>Price:</strong> ${registeredWorkshop.price}</p>
-      `;
-    } else {
-      confirmationDiv.innerHTML = "<p>No registration data available.</p>";
-    }
+    confirmationDiv.innerHTML = "<p>No registration data available.</p>";
   }
+}
 
-  function logout() {
-    localStorage.clear();
-    window.location.href = 'login.html';
-  }
+function logout() {
+  localStorage.removeItem('user');
+  window.location.href = 'login.html';
+}
 </script>
 
 </body>
