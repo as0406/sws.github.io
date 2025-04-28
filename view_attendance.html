@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>View Attendance</title>
+  <title>Workshop Attendance</title>
   <style>
     body { font-family: Arial; padding: 30px; text-align: center; background-color: #f5f5f5; }
     .nav-buttons { display: flex; justify-content: space-between; margin-bottom: 20px; }
@@ -15,73 +15,83 @@
       cursor: pointer;
     }
     .nav-buttons button:hover { background-color: #21867a; }
-    .attendance-box {
-      border: 1px solid #ccc;
-      padding: 20px;
+    table {
+      width: 80%;
       margin: 20px auto;
-      max-width: 450px;
       background: #ffffff;
-      border-radius: 8px;
-      text-align: left;
+      border-collapse: collapse;
     }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+    button.submit {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #264653;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button.submit:hover { background-color: #1b333f; }
   </style>
 </head>
 <body>
 
 <div class="nav-buttons">
-  <button onclick="window.location.href='trainer.html'">← Dashboard</button>
+  <button onclick="window.location.href='trainer.html'">← Back to Dashboard</button>
   <button onclick="logout()">Logout</button>
 </div>
 
-<h2>Workshop Attendance</h2>
+<h2>Mark Attendance</h2>
 
-<div id="attendanceList">
-  Loading attendance...
-</div>
-<button onclick="submitAttendance()">Submit Attendance</button>
+<form id="attendanceForm"></form>
 
 <script>
-const currentWorkshopId = localStorage.getItem('currentWorkshop');
-const workshops = JSON.parse(localStorage.getItem('workshops')) || [];
-const workshop = workshops.find(w => w.id === currentWorkshopId);
-const list = document.getElementById('attendanceList');
+const workshops = JSON.parse(localStorage.getItem('workshops'));
+const workshopId = localStorage.getItem('currentWorkshop');
+const form = document.getElementById('attendanceForm');
+
+const workshop = workshops.find(w => w.id === workshopId);
 
 if (!workshop || !workshop.participants || workshop.participants.length === 0) {
-  list.innerHTML = "<p>No participants registered.</p>";
+  form.innerHTML = "<p>No participants registered yet.</p>";
 } else {
-  list.innerHTML = '';
+  let html = `<table><tr><th>Participant</th><th>Attendance</th></tr>`;
   workshop.participants.forEach(name => {
-    const div = document.createElement('div');
-    div.className = 'attendance-box';
-    div.innerHTML = `
-      <label>${name}:
-        <input type="radio" name="${name}" value="Present" required> Present
-        <input type="radio" name="${name}" value="Absent" required> Absent
-      </label>
+    html += `
+      <tr>
+        <td>${name}</td>
+        <td>
+          <select name="${name}">
+            <option value="Present">Present</option>
+            <option value="Absent">Absent</option>
+          </select>
+        </td>
+      </tr>
     `;
-    list.appendChild(div);
   });
+  html += `</table><button type="submit" class="submit">Submit Attendance</button>`;
+  form.innerHTML = html;
 }
 
-function submitAttendance() {
-  const radios = document.querySelectorAll('input[type="radio"]:checked');
-  if (radios.length !== workshop.participants.length) {
-    alert("Please mark attendance for all participants.");
-    return;
-  }
+form.addEventListener('submit', function(event) {
+  event.preventDefault();
 
   const attendance = {};
-  radios.forEach(radio => {
-    attendance[radio.name] = radio.value;
+  workshop.participants.forEach(name => {
+    attendance[name] = form.elements[name].value;
   });
 
-  localStorage.setItem('attendance_' + workshop.id, JSON.stringify(attendance));
-  alert("Attendance recorded!");
+  localStorage.setItem(`attendance_${workshopId}`, JSON.stringify(attendance));
+  alert('Attendance recorded successfully!');
   window.location.href = 'trainer.html';
-}
+});
 
 function logout() {
-  localStorage.clear();
+  localStorage.removeItem('user');
   window.location.href = 'login.html';
 }
 </script>
