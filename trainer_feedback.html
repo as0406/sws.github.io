@@ -15,46 +15,49 @@
       cursor: pointer;
     }
     .nav-buttons button:hover { background-color: #21867a; }
-    .feedback-box {
-      border: 1px solid #ccc;
+    .feedback {
+      background: #ffffff;
       padding: 20px;
       margin: 20px auto;
-      max-width: 450px;
-      background: #ffffff;
+      max-width: 400px;
+      border: 1px solid #ccc;
       border-radius: 8px;
-      text-align: left;
     }
   </style>
 </head>
 <body>
 
 <div class="nav-buttons">
-  <button onclick="window.location.href='trainer.html'">← Dashboard</button>
+  <button onclick="window.location.href='trainer.html'">← Back to Dashboard</button>
   <button onclick="logout()">Logout</button>
 </div>
 
 <h2>Workshop Feedback</h2>
 
-<div id="feedbackDisplay">Loading feedback...</div>
+<div id="feedbackDiv">
+  Loading feedback...
+</div>
 
 <script>
-const currentWorkshopId = localStorage.getItem('currentWorkshop');
-const feedback = JSON.parse(localStorage.getItem('feedback_' + currentWorkshopId));
-const div = document.getElementById('feedbackDisplay');
+const workshopId = localStorage.getItem('currentWorkshop');
+const feedbackKey = `feedback_${workshopId}`;
+const feedbackData = JSON.parse(localStorage.getItem(feedbackKey));
+const div = document.getElementById('feedbackDiv');
 
-if (!feedback || !feedback.comment) {
+if (!feedbackData) {
   div.innerHTML = "<p>No feedback submitted yet.</p>";
 } else {
   div.innerHTML = `
-    <div class="feedback-box">
-      <p><strong>Rating:</strong> ${feedback.rating}/5</p>
-      <p><strong>Comment:</strong> "${feedback.comment}"</p>
+    <div class="feedback">
+      <p><strong>Participant:</strong> ${feedbackData.userName}</p>
+      <p><strong>Rating:</strong> ${feedbackData.rating}/5</p>
+      <p><strong>Comment:</strong> "${feedbackData.comment}"</p>
     </div>
   `;
 }
 
 function logout() {
-  localStorage.clear();
+  localStorage.removeItem('user');
   window.location.href = 'login.html';
 }
 </script>
